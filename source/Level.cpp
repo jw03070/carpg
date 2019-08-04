@@ -55,9 +55,8 @@ void Level::LoadLanguage()
 }
 
 //=================================================================================================
-void Level::LoadData()
+void Level::LoadData(ResourceManager& res_mgr)
 {
-	ResourceManager& res_mgr = ResourceManager::Get();
 	tFlare = res_mgr.Load<Texture>("flare.png");
 	tFlare2 = res_mgr.Load<Texture>("flare2.png");
 	tWater = res_mgr.Load<Texture>("water.png");

@@ -23,9 +23,9 @@ Console::Console(const DialogInfo& info) : GameDialogBox(info), added(false)
 }
 
 //=================================================================================================
-void Console::LoadData()
+void Console::LoadData(ResourceManager& res_mgr)
 {
-	tBackground = ResourceManager::Get().Load<Texture>("tlo_konsoli.jpg");
+	tBackground = res_mgr.Load<Texture>("tlo_konsoli.jpg");
 }
 
 //=================================================================================================

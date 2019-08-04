@@ -24,7 +24,7 @@ void Explo::Save(FileWriter& f)
 }
 
 //=================================================================================================
-void Explo::Load(FileReader& f)
+void Explo::Load(FileReader& f, ResourceManager& res_mgr)
 {
 	f >> pos;
 	f >> size;
@@ -34,7 +34,7 @@ void Explo::Load(FileReader& f)
 	for(uint i = 0; i < hitted.size(); ++i)
 		hitted[i] = Unit::GetByRefid(f.Read<int>());
 	owner = Unit::GetByRefid(f.Read<int>());
-	tex = ResourceManager::Get().Load<Texture>(f.ReadString1());
+	tex = res_mgr.Load<Texture>(f.ReadString1());
 }
 
 //=================================================================================================

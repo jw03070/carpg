@@ -44,9 +44,9 @@ void GameMessages::LoadLanguage()
 }
 
 //=================================================================================================
-void GameMessages::LoadData()
+void GameMessages::LoadData(ResourceManager& res_mgr)
 {
-	snd_scribble = ResourceManager::Get().Load<Sound>("scribble.mp3");
+	snd_scribble = res_mgr.Load<Sound>("scribble.mp3");
 }
 
 //=================================================================================================

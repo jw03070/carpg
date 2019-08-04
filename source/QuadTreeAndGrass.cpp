@@ -288,9 +288,8 @@ void Game::SetTerrainTextures()
 	if(LocationHelper::IsVillage(L.location))
 		tex[2] = tField;
 
-	ResourceManager& res_mgr = ResourceManager::Get();
 	for(int i = 0; i < 5; ++i)
-		res_mgr.Load(tex[i]);
+		res_mgr->Load(tex[i]);
 
 	L.terrain->SetTextures(tex);
 }

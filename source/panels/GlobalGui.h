@@ -13,7 +13,7 @@ public:
 	void Prepare() override;
 	void InitOnce() override;
 	void LoadLanguage() override;
-	void LoadData() override;
+	void LoadData(ResourceManager& res_mgr) override;
 	void PostInit() override;
 	void Cleanup() override;
 	void Draw(ControlDrawData*) override;

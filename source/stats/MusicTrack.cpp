@@ -124,7 +124,6 @@ uint MusicTrack::Load(uint& errors)
 		{ "death", MusicType::Death }
 	});
 
-	ResourceManager& res_mgr = ResourceManager::Get();
 	Ptr<MusicTrack> track(nullptr);
 
 	try
@@ -208,7 +207,6 @@ uint MusicTrack::Load(uint& errors)
 //=================================================================================================
 void Game::LoadMusic(MusicType type, bool new_load_screen, bool instant)
 {
-	ResourceManager& res_mgr = ResourceManager::Get();
 	bool first = true;
 
 	for(MusicTrack* track : MusicTrack::tracks)
@@ -223,13 +221,13 @@ void Game::LoadMusic(MusicType type, bool new_load_screen, bool instant)
 					return;
 				}
 				if(new_load_screen)
-					res_mgr.AddTaskCategory(txLoadMusic);
+					res_mgr->AddTaskCategory(txLoadMusic);
 				first = false;
 			}
 			if(instant)
-				res_mgr.LoadInstant(track->music);
+				res_mgr->LoadInstant(track->music);
 			else
-				res_mgr.Load(track->music);
+				res_mgr->Load(track->music);
 		}
 	}
 }

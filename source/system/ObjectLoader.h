@@ -11,7 +11,7 @@ enum ObjectProperty;
 class ObjectLoader : public ContentLoader
 {
 	friend class Content;
-private:
+
 	void DoLoading() override;
 	static void Cleanup();
 	void InitTokenizer() override;

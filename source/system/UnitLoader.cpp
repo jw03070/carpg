@@ -1819,8 +1819,6 @@ void UnitLoader::ParseSpells(Ptr<SpellList>& list)
 //=================================================================================================
 void UnitLoader::ParseSounds(Ptr<SoundPack>& pack)
 {
-	ResourceManager& res_mgr = ResourceManager::Get();
-
 	// {
 	t.AssertSymbol('{');
 	t.Next();

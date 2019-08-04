@@ -42,7 +42,7 @@ class Level : public GameComponent
 public:
 	Level();
 	void LoadLanguage() override;
-	void LoadData() override;
+	void LoadData(ResourceManager& res_mgr) override;
 	void PostInit() override;
 	void Cleanup() override;
 	void Reset();

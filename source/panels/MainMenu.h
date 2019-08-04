@@ -21,7 +21,7 @@ public:
 
 	MainMenu(Game* game);
 	void LoadLanguage();
-	void LoadData();
+	void LoadData(ResourceManager& res_mgr);
 	void Draw(ControlDrawData* cdd) override;
 	void Update(float dt) override;
 	void Event(GuiEvent e) override;

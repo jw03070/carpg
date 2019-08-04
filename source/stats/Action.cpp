@@ -26,10 +26,8 @@ Action* Action::Find(const string& id)
 }
 
 //=================================================================================================
-void Action::LoadData()
+void Action::LoadData(ResourceManager& res_mgr)
 {
-	ResourceManager& res_mgr = ResourceManager::Get();
-
 	for(Action& action : actions)
 	{
 		action.tex = res_mgr.Load<Texture>(Format("%s.png", action.id));

@@ -67,9 +67,8 @@ void MainMenu::LoadLanguage()
 }
 
 //=================================================================================================
-void MainMenu::LoadData()
+void MainMenu::LoadData(ResourceManager& res_mgr)
 {
-	ResourceManager& res_mgr = ResourceManager::Get();
 	tBackground = res_mgr.Load<Texture>("menu_bg.jpg");
 	tLogo = res_mgr.Load<Texture>("logo.png");
 	tFModLogo = res_mgr.Load<Texture>("fmod_logo.png");

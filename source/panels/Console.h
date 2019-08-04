@@ -10,7 +10,7 @@ class Console : public GameDialogBox, public OnCharHandler
 {
 public:
 	explicit Console(const DialogInfo& info);
-	void LoadData();
+	void LoadData(ResourceManager& res_mgr);
 	void Draw(ControlDrawData* cdd = nullptr) override;
 	void Update(float dt) override;
 	void Event(GuiEvent e) override;

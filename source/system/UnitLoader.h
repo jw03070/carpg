@@ -15,6 +15,7 @@ class UnitLoader : public ContentLoader
 
 	friend class Content;
 
+	UnitLoader(ResourceManager& res_mgr);
 	void DoLoading() override;
 	static void Cleanup();
 	void InitTokenizer() override;
@@ -36,5 +37,6 @@ class UnitLoader : public ContentLoader
 	void ParseGroup(const string& id);
 	void ProcessDialogRequests();
 
+	ResourceManager& res_mgr;
 	vector<DialogRequest> dialog_requests;
 };

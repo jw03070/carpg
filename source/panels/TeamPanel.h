@@ -11,7 +11,7 @@ class TeamPanel : public GamePanel
 public:
 	TeamPanel();
 	void LoadLanguage();
-	void LoadData();
+	void LoadData(ResourceManager& res_mgr);
 	void Draw(ControlDrawData*) override;
 	void Update(float dt) override;
 	void Event(GuiEvent e) override;

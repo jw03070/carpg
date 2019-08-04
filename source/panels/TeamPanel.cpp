@@ -74,9 +74,8 @@ void TeamPanel::LoadLanguage()
 }
 
 //=================================================================================================
-void TeamPanel::LoadData()
+void TeamPanel::LoadData(ResourceManager& res_mgr)
 {
-	ResourceManager& res_mgr = ResourceManager::Get();
 	tCrown = res_mgr.Load<Texture>("korona.png");
 	tSkull = res_mgr.Load<Texture>("czaszka.png");
 }

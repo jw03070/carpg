@@ -31,6 +31,6 @@ struct BuffInfo
 
 	static BuffInfo info[];
 
-	static void LoadImages();
+	static void LoadImages(ResourceManager& res_mgr);
 	static void LoadText();
 };

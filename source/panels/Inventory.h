@@ -69,7 +69,7 @@ public:
 	~Inventory();
 	void InitOnce();
 	void LoadLanguage();
-	void LoadData();
+	void LoadData(ResourceManager& res_mgr);
 	void OnReset();
 	void OnReload();
 	void Setup(PlayerController* pc);

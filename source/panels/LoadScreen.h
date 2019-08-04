@@ -8,7 +8,7 @@ class LoadScreen : public Control
 {
 public:
 	LoadScreen() : progress(0) {}
-	void LoadData();
+	void LoadData(ResourceManager& res_mgr);
 	void Draw(ControlDrawData* cdd = nullptr) override;
 	void Setup(float min_progress, float max_progress, int steps, cstring str);
 	void Tick(cstring str);

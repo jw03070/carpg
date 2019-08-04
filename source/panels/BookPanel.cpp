@@ -14,10 +14,8 @@ BookPanel::BookPanel() : book(nullptr), scale(0, 0)
 }
 
 //=================================================================================================
-void BookPanel::LoadData()
+void BookPanel::LoadData(ResourceManager& res_mgr)
 {
-	ResourceManager& res_mgr = ResourceManager::Get();
-
 	tArrowL = res_mgr.Load<Texture>("strzalka_l.png");
 	tArrowR = res_mgr.Load<Texture>("strzalka_p.png");
 

@@ -286,6 +286,7 @@ public:
 	Engine* engine;
 	Input* input;
 	Render* render;
+	ResourceManager* res_mgr;
 	SoundManager* sound_mgr;
 	CustomCollisionWorld* phy_world;
 

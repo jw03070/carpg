@@ -19,9 +19,6 @@ class DialogLoader : public ContentLoader
 		IFS_INLINE_CHOICE
 	};
 
-	
-
-private:
 	void DoLoading() override;
 	static void Cleanup();
 	void InitTokenizer() override;
@@ -96,5 +93,4 @@ public:
 	bool BuildDialogBlock(Node* node);
 
 	GameDialog* current_dialog;
-	//vector<Node*> nodes;
 };

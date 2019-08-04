@@ -21,7 +21,7 @@ public:
 
 	explicit GameMenu(const DialogInfo& info);
 	void LoadLanguage();
-	void LoadData();
+	void LoadData(ResourceManager& res_mgr);
 	void Draw(ControlDrawData*) override;
 	void Update(float dt) override;
 	void Event(GuiEvent e) override;

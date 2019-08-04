@@ -1049,9 +1049,6 @@
     <ClInclude Include="system\DialogContext.h">
       <Filter>system\dialogs</Filter>
     </ClInclude>
-    <ClInclude Include="system\DialogLoader.h">
-      <Filter>system\dialogs</Filter>
-    </ClInclude>
     <ClInclude Include="generator\NameHelper.h">
       <Filter>helpers</Filter>
     </ClInclude>
@@ -1128,6 +1125,9 @@
     <ClInclude Include="World.h" />
     <ClInclude Include="stats\MusicTrack.h">
       <Filter>stats</Filter>
+    </ClInclude>
+    <ClInclude Include="system\DialogLoader.h">
+      <Filter>system\dialogs</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

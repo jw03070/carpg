@@ -178,9 +178,8 @@ void ServerPanel::LoadLanguage()
 }
 
 //=================================================================================================
-void ServerPanel::LoadData()
+void ServerPanel::LoadData(ResourceManager& res_mgr)
 {
-	ResourceManager& res_mgr = ResourceManager::Get();
 	tReady = res_mgr.Load<Texture>("gotowy.png");
 	tNotReady = res_mgr.Load<Texture>("niegotowy.png");
 }

@@ -8,7 +8,7 @@
 class BuildingLoader : public ContentLoader
 {
 	friend class Content;
-private:
+
 	struct Var
 	{
 		string name;

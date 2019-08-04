@@ -8,7 +8,7 @@ class BookPanel : public GamePanel
 {
 public:
 	BookPanel();
-	void LoadData();
+	void LoadData(ResourceManager& res_mgr);
 	void Draw(ControlDrawData*) override;
 	void Event(GuiEvent event) override;
 	void Update(float dt) override;

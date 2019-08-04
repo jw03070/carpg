@@ -520,9 +520,8 @@ void Journal::NeedUpdate(Mode at_mode, int quest_id)
 }
 
 //=================================================================================================
-void Journal::LoadData()
+void Journal::LoadData(ResourceManager& res_mgr)
 {
-	ResourceManager& res_mgr = ResourceManager::Get();
 	tBook = res_mgr.Load<Texture>("book.png");
 	tPage[0] = res_mgr.Load<Texture>("dziennik_przyciski.png");
 	tPage[1] = res_mgr.Load<Texture>("dziennik_przyciski2.png");

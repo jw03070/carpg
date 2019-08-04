@@ -230,9 +230,8 @@ void CreateCharacterPanel::LoadLanguage()
 }
 
 //=================================================================================================
-void CreateCharacterPanel::LoadData()
+void CreateCharacterPanel::LoadData(ResourceManager& res_mgr)
 {
-	ResourceManager& res_mgr = ResourceManager::Get();
 	tBox = res_mgr.Load<Texture>("box.png");
 	tPowerBar = res_mgr.Load<Texture>("klasa_cecha.png");
 	custom_x.tex[Button::NONE] = AreaLayout(res_mgr.Load<Texture>("close.png"));

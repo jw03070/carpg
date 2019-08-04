@@ -60,9 +60,8 @@ void WorldMapGui::LoadLanguage()
 }
 
 //=================================================================================================
-void WorldMapGui::LoadData()
+void WorldMapGui::LoadData(ResourceManager& res_mgr)
 {
-	ResourceManager& res_mgr = ResourceManager::Get();
 	tMapIcon[LI_CAMP] = res_mgr.Load<Texture>("camp.png");
 	tMapIcon[LI_VILLAGE] = res_mgr.Load<Texture>("village.png");
 	tMapIcon[LI_CITY] = res_mgr.Load<Texture>("city.png");

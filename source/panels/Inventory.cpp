@@ -118,9 +118,8 @@ void Inventory::LoadLanguage()
 }
 
 //=================================================================================================
-void Inventory::LoadData()
+void Inventory::LoadData(ResourceManager& res_mgr)
 {
-	ResourceManager& res_mgr = ResourceManager::Get();
 	tItemBar = res_mgr.Load<Texture>("item_bar.png");
 	tEquipped = res_mgr.Load<Texture>("equipped.png");
 	tGold = res_mgr.Load<Texture>("coins.png");

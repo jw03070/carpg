@@ -10,7 +10,7 @@ class ActionPanel : public GamePanel
 public:
 	ActionPanel();
 	void LoadLanguage();
-	void LoadData();
+	void LoadData(ResourceManager& res_mgr);
 	void Draw(ControlDrawData* cdd = nullptr) override;
 	void Event(GuiEvent e) override;
 	void Update(float dt) override;

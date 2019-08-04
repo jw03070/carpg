@@ -54,7 +54,7 @@ class GameMessages : public Control
 {
 public:
 	void LoadLanguage();
-	void LoadData();
+	void LoadData(ResourceManager& res_mgr);
 	void Draw(ControlDrawData* cdd = nullptr) override;
 	void Update(float dt) override;
 	void Reset();

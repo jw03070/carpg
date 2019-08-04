@@ -7,9 +7,8 @@
 #include "GlobalGui.h"
 
 //=================================================================================================
-void LoadScreen::LoadData()
+void LoadScreen::LoadData(ResourceManager& res_mgr)
 {
-	ResourceManager& res_mgr = ResourceManager::Get();
 	tLoadbarBg = res_mgr.Load<Texture>("loadbar_bg.png");
 	tLoadbar = res_mgr.Load<Texture>("loadbar.png");
 	tBackground = res_mgr.Load<Texture>("load_bg.jpg");

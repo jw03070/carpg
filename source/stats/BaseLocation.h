@@ -153,7 +153,7 @@ struct BaseLocation
 
 	RoomType* GetRandomRoomType() const;
 	UnitGroup* GetRandomGroup() const;
-	static void PreloadTextures();
+	static void PreloadTextures(ResourceManager& res_mgr);
 	static uint SetRoomPointers();
 };
 extern BaseLocation g_base_locations[];

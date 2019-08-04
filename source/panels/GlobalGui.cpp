@@ -231,27 +231,26 @@ void GlobalGui::LoadLanguage()
 }
 
 //=================================================================================================
-void GlobalGui::LoadData()
+void GlobalGui::LoadData(ResourceManager& res_mgr)
 {
-	ResourceManager& res_mgr = ResourceManager::Get();
 	GamePanel::tBackground = res_mgr.Load<Texture>("game_panel.png");
 	GamePanel::tDialog = res_mgr.Load<Texture>("dialog.png");
 
-	actions->LoadData();
-	book->LoadData();
-	console->LoadData();
-	create_character->LoadData();
-	game_gui->LoadData();
-	game_menu->LoadData();
-	inventory->LoadData();
-	journal->LoadData();
-	main_menu->LoadData();
-	messages->LoadData();
-	minimap->LoadData();
-	pick_server->LoadData();
-	server->LoadData();
-	team->LoadData();
-	world_map->LoadData();
+	actions->LoadData(res_mgr);
+	book->LoadData(res_mgr);
+	console->LoadData(res_mgr);
+	create_character->LoadData(res_mgr);
+	game_gui->LoadData(res_mgr);
+	game_menu->LoadData(res_mgr);
+	inventory->LoadData(res_mgr);
+	journal->LoadData(res_mgr);
+	main_menu->LoadData(res_mgr);
+	messages->LoadData(res_mgr);
+	minimap->LoadData(res_mgr);
+	pick_server->LoadData(res_mgr);
+	server->LoadData(res_mgr);
+	team->LoadData(res_mgr);
+	world_map->LoadData(res_mgr);
 }
 
 //=================================================================================================

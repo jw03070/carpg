@@ -7,7 +7,8 @@
 class ItemLoader : public ContentLoader
 {
 	friend class Content;
-private:
+
+	ItemLoader(ResourceManager& res_mgr) : res_mgr(res_mgr) {}
 	void DoLoading() override;
 	static void Cleanup();
 	void InitTokenizer() override;
@@ -23,4 +24,6 @@ private:
 	void ParseBetterItems();
 	void ParseAlias(const string& id);
 	void CalculateCrc();
+
+	ResourceManager& res_mgr;
 };

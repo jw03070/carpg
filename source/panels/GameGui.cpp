@@ -107,9 +107,8 @@ void GameGui::LoadLanguage()
 }
 
 //=================================================================================================
-void GameGui::LoadData()
+void GameGui::LoadData(ResourceManager& res_mgr)
 {
-	ResourceManager& res_mgr = ResourceManager::Get();
 	tCrosshair = res_mgr.Load<Texture>("crosshair.png");
 	tBubble = res_mgr.Load<Texture>("bubble.png");
 	tObwodkaBolu = res_mgr.Load<Texture>("czerwono.png");
@@ -140,7 +139,7 @@ void GameGui::LoadData()
 	tEquipped = res_mgr.Load<Texture>("equipped.png");
 	tDialog = res_mgr.Load<Texture>("dialog.png");
 
-	BuffInfo::LoadImages();
+	BuffInfo::LoadImages(res_mgr);
 }
 
 //=================================================================================================

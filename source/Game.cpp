@@ -757,9 +757,8 @@ void Game::DoExitToMenu()
 	StopAllSounds();
 	ClearGame();
 
-	auto& res_mgr = ResourceManager::Get();
-	if(res_mgr.IsLoadScreen())
-		res_mgr.CancelLoadScreen(true);
+	if(res_mgr->IsLoadScreen())
+		res_mgr->CancelLoadScreen(true);
 
 	game_state = GS_MAIN_MENU;
 	paused = false;
@@ -1308,7 +1307,7 @@ MeshInstance* Game::GetBowInstance(Mesh* mesh)
 	if(bow_instances.empty())
 	{
 		if(!mesh->IsLoaded())
-			ResourceManager::Get().Load(mesh);
+			res_mgr->LoadInstant(mesh);
 		return new MeshInstance(mesh);
 	}
 	else

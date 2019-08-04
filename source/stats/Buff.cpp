@@ -16,9 +16,8 @@ BuffInfo BuffInfo::info[] = {
 	BuffInfo("buff_poison_res")
 };
 
-void BuffInfo::LoadImages()
+void BuffInfo::LoadImages(ResourceManager& res_mgr)
 {
-	ResourceManager& res_mgr = ResourceManager::Get();
 	for(int i=0; i<BUFF_COUNT; ++i)
 	{
 		BuffInfo& buff = info[i];

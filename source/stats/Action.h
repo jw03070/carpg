@@ -37,7 +37,7 @@ struct Action
 	}
 
 	static Action* Find(const string& id);
-	static void LoadData();
+	static void LoadData(ResourceManager& res_mgr);
 
 	static Action actions[];
 	static const uint n_actions;
