@@ -17,6 +17,7 @@
 #include "ResourceManager.h"
 #include "SoundManager.h"
 #include "PhysicCallbacks.h"
+#include "GameResources.h"
 #include "DirectX.h"
 
 //-----------------------------------------------------------------------------
@@ -568,7 +569,7 @@ void Game::ListDrawObjects(LevelArea& area, FrustumPlanes& frustum, bool outside
 				pos.y -= mesh->head.bbox.v1.y;
 			}
 			else
-				mesh = aBag;
+				mesh = game_res->aBag;
 			if(frustum.SphereToFrustum(item.pos, mesh->head.radius))
 			{
 				SceneNode* node = node_pool.Get();
@@ -1136,10 +1137,10 @@ void Game::ListDrawObjectsUnit(FrustumPlanes& frustum, bool outside, Unit& u)
 			if(u.action == A_SHOOT)
 			{
 				if(u.animation_state != 2)
-					right_hand_item = aArrow;
+					right_hand_item = game_res->aArrow;
 			}
 			else
-				right_hand_item = aArrow;
+				right_hand_item = game_res->aArrow;
 		}
 		else if(u.weapon_taken == W_ONE_HANDED)
 			w_dloni = true;
@@ -1148,7 +1149,7 @@ void Game::ListDrawObjectsUnit(FrustumPlanes& frustum, bool outside, Unit& u)
 		if(u.animation_state == 1)
 		{
 			if(u.weapon_taken == W_BOW)
-				right_hand_item = aArrow;
+				right_hand_item = game_res->aArrow;
 			else
 				w_dloni = true;
 		}
@@ -1157,7 +1158,7 @@ void Game::ListDrawObjectsUnit(FrustumPlanes& frustum, bool outside, Unit& u)
 		if(u.animation_state == 0)
 		{
 			if(u.weapon_hiding == W_BOW)
-				right_hand_item = aArrow;
+				right_hand_item = game_res->aArrow;
 			else
 				w_dloni = true;
 		}
@@ -1373,7 +1374,7 @@ void Game::ListDrawObjectsUnit(FrustumPlanes& frustum, bool outside, Unit& u)
 		// brwi
 		SceneNode* node2 = node_pool.Get();
 		node2->billboard = false;
-		node2->mesh = aEyebrows;
+		node2->mesh = game_res->aEyebrows;
 		node2->parent_mesh_inst = node->mesh_inst;
 		node2->flags = SceneNode::F_ANIMATED;
 		node2->mat = node->mat;
@@ -1404,7 +1405,7 @@ void Game::ListDrawObjectsUnit(FrustumPlanes& frustum, bool outside, Unit& u)
 		{
 			SceneNode* node3 = node_pool.Get();
 			node3->billboard = false;
-			node3->mesh = aHair[h.hair];
+			node3->mesh = game_res->aHair[h.hair];
 			node3->parent_mesh_inst = node->mesh_inst;
 			node3->flags = SceneNode::F_ANIMATED;
 			node3->mat = node->mat;
@@ -1436,7 +1437,7 @@ void Game::ListDrawObjectsUnit(FrustumPlanes& frustum, bool outside, Unit& u)
 		{
 			SceneNode* node3 = node_pool.Get();
 			node3->billboard = false;
-			node3->mesh = aBeard[h.beard];
+			node3->mesh = game_res->aBeard[h.beard];
 			node3->parent_mesh_inst = node->mesh_inst;
 			node3->flags = SceneNode::F_ANIMATED;
 			node3->mat = node->mat;
@@ -1468,7 +1469,7 @@ void Game::ListDrawObjectsUnit(FrustumPlanes& frustum, bool outside, Unit& u)
 		{
 			SceneNode* node3 = node_pool.Get();
 			node3->billboard = false;
-			node3->mesh = aMustache[h.mustache];
+			node3->mesh = game_res->aMustache[h.mustache];
 			node3->parent_mesh_inst = node->mesh_inst;
 			node3->flags = SceneNode::F_ANIMATED;
 			node3->mat = node->mat;
@@ -3212,6 +3213,7 @@ void Game::DrawGlowingNodes(bool use_postfx)
 void Game::DrawSkybox()
 {
 	IDirect3DDevice9* device = render->GetDevice();
+	Mesh& mesh = *game_res->aSkybox;
 
 	render->SetAlphaTest(false);
 	render->SetAlphaBlend(false);
@@ -3221,16 +3223,16 @@ void Game::DrawSkybox()
 	uint passes;
 	Matrix m1 = Matrix::Translation(game_level->camera.center) * game_level->camera.matViewProj;
 
-	V(device->SetVertexDeclaration(render->GetVertexDeclaration(aSkybox->vertex_decl)));
-	V(device->SetStreamSource(0, aSkybox->vb, 0, aSkybox->vertex_size));
-	V(device->SetIndices(aSkybox->ib));
+	V(device->SetVertexDeclaration(render->GetVertexDeclaration(mesh.vertex_decl)));
+	V(device->SetStreamSource(0, mesh.vb, 0, mesh.vertex_size));
+	V(device->SetIndices(mesh.ib));
 
 	V(eSkybox->SetTechnique(techSkybox));
 	V(eSkybox->SetMatrix(hSkyboxCombined, (D3DXMATRIX*)&m1));
 	V(eSkybox->Begin(&passes, 0));
 	V(eSkybox->BeginPass(0));
 
-	for(vector<Mesh::Submesh>::iterator it = aSkybox->subs.begin(), end = aSkybox->subs.end(); it != end; ++it)
+	for(vector<Mesh::Submesh>::iterator it = mesh.subs.begin(), end = mesh.subs.end(); it != end; ++it)
 	{
 		V(eSkybox->SetTexture(hSkyboxTex, it->tex->tex));
 		V(eSkybox->CommitChanges());
@@ -3515,10 +3517,10 @@ void Game::DrawDebugNodes(const vector<DebugSceneNode*>& nodes)
 	V(eMesh->BeginPass(0));
 
 	static Mesh* meshes[DebugSceneNode::MaxType] = {
-		aBox,
-		aCylinder,
-		aSphere,
-		aCapsule
+		game_res->aBox,
+		game_res->aCylinder,
+		game_res->aSphere,
+		game_res->aCapsule
 	};
 
 	static Vec4 colors[DebugSceneNode::MaxGroup] = {
@@ -3703,16 +3705,17 @@ void Game::DrawBillboards(const vector<Billboard>& billboards)
 void Game::DrawExplosions(const vector<Explo*>& explos)
 {
 	IDirect3DDevice9* device = render->GetDevice();
+	Mesh& mesh = *game_res->aSpellball;
+	Mesh::Submesh& sub = mesh.subs[0];
 
 	render->SetAlphaBlend(true);
 	render->SetAlphaTest(false);
 	render->SetNoCulling(false);
 	render->SetNoZWrite(true);
 
-	Mesh* mesh = aSpellball;
-	V(device->SetVertexDeclaration(render->GetVertexDeclaration((mesh->vertex_decl))));
-	V(device->SetStreamSource(0, mesh->vb, 0, mesh->vertex_size));
-	V(device->SetIndices(mesh->ib));
+	V(device->SetVertexDeclaration(render->GetVertexDeclaration((mesh.vertex_decl))));
+	V(device->SetStreamSource(0, mesh.vb, 0, mesh.vertex_size));
+	V(device->SetIndices(mesh.ib));
 
 	uint passes;
 	V(eMesh->SetTechnique(techMeshExplo));
@@ -3739,7 +3742,6 @@ void Game::DrawExplosions(const vector<Explo*>& explos)
 		V(eMesh->SetVector(hMeshTint, (D3DXVECTOR4*)&tint));
 		V(eMesh->CommitChanges());
 
-		Mesh::Submesh& sub = aSpellball->subs[0];
 		V(device->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, 0, sub.min_ind, sub.n_ind, sub.first * 3, sub.tris));
 	}
 
@@ -4025,7 +4027,7 @@ void Game::DrawStunEffects(const vector<StunEffect>& stuns)
 	render->SetNoCulling(true);
 	render->SetNoZWrite(true);
 
-	const Mesh& mesh = *aStun;
+	const Mesh& mesh = *game_res->aStun;
 
 	V(eMesh->SetTechnique(techMeshDir));
 	V(eMesh->SetVector(hMeshFogColor, (D3DXVECTOR4*)&Vec4(1, 1, 1, 1)));

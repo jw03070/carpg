@@ -8,6 +8,7 @@
 #include "PlayerInfo.h"
 #include "SoundManager.h"
 #include "SaveState.h"
+#include "GameResources.h"
 
 const float Chest::SOUND_DIST = 1.f;
 EntityType<Chest>::Impl EntityType<Chest>::impl;
@@ -56,7 +57,7 @@ void Chest::Load(FileReader& f, bool local)
 
 	if(local)
 	{
-		mesh_inst = new MeshInstance(game->aChest);
+		mesh_inst = new MeshInstance(game_res->aChest);
 
 		int state = f.Read<int>();
 		if(state != 0)
@@ -99,7 +100,7 @@ bool Chest::Read(BitStreamReader& f)
 	if(!f)
 		return false;
 	Register();
-	mesh_inst = new MeshInstance(game->aChest);
+	mesh_inst = new MeshInstance(game_res->aChest);
 	return true;
 }
 

@@ -460,6 +460,7 @@ public:
 	VB vbFullscreen;
 	vector<PostEffect> post_effects;
 	// scene
+	VB vbParticle;
 	Color clear_color, clear_color_next;
 	bool dungeon_tex_wrap;
 	bool cl_normalmap, cl_specularmap, cl_glow;
@@ -498,15 +499,8 @@ public:
 	//-----------------------------------------------------------------
 	// RESOURCES
 	//-----------------------------------------------------------------
-	MeshPtr aHair[5], aBeard[5], aMustache[2], aEyebrows;
-	MeshPtr aBox, aCylinder, aSphere, aCapsule;
-	MeshPtr aArrow, aSkybox, aBag, aChest, aGrating, aDoorWall, aDoorWall2, aStairsDown, aStairsDown2, aStairsUp, aSpellball, aPressurePlate, aDoor, aDoor2, aStun;
-	VertexDataPtr vdStairsUp, vdStairsDown, vdDoorHole;
 	RenderTarget* rt_save, *rt_item_rot;
 	Texture tMinimap;
-	TexturePtr tBlack, tPortal, tLightingLine, tRip, tEquipped, tWarning, tError;
-	TexturePtr tBlood[BLOOD_MAX], tBloodSplat[BLOOD_MAX], tSpark, tSpawn;
-	TexturePack tFloor[2], tWall[2], tCeil[2], tFloorBase, tWallBase, tCeilBase;
 	ID3DXEffect* eMesh, *eParticle, *eSkybox, *eArea, *ePostFx, *eGlow;
 	D3DXHANDLE techMesh, techMeshDir, techMeshSimple, techMeshSimple2, techMeshExplo, techParticle, techSkybox, techArea, techTrail, techGlowMesh, techGlowAni;
 	D3DXHANDLE hMeshCombined, hMeshWorld, hMeshTex, hMeshFogColor, hMeshFogParam, hMeshTint, hMeshAmbientColor, hMeshLightDir, hMeshLightColor, hMeshLights,
@@ -514,8 +508,6 @@ public:
 		hGlowCombined, hGlowBones, hGlowColor, hGlowTex;
 	SoundPtr sGulp, sCoins, sBow[2], sDoor[3], sDoorClosed[2], sDoorClose, sItem[10], sChestOpen, sChestClose, sDoorBudge, sRock, sWood, sCrystal, sMetal,
 		sBody[5], sBone, sSkin, sArenaFight, sArenaWin, sArenaLost, sUnlock, sEvil, sEat, sSummon, sZap, sCancel;
-	VB vbParticle;
-	TexturePtr tGrass, tGrass2, tGrass3, tRoad, tFootpath, tField;
 
 	//-----------------------------------------------------------------
 	// LOCALIZED TEXTS
