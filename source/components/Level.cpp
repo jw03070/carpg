@@ -3797,7 +3797,6 @@ void Level::AddPlayerTeam(const Vec3& pos, float rot, bool reenter, bool hide_we
 		unit.rot = rot;
 		unit.animation = unit.current_animation = ANI_STAND;
 		unit.mesh_inst->Play(NAMES::ani_stand, PLAY_PRIO1, 0);
-		unit.mesh_inst->groups[0].speed = 1.f;
 		unit.BreakAction();
 		unit.SetAnimationAtEnd();
 		if(unit.area && unit.area->area_type == LevelArea::Type::Building && reenter)

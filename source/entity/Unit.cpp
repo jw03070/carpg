@@ -317,7 +317,6 @@ bool Unit::DropItem(int index)
 
 	action = A_ANIMATION;
 	mesh_inst->Play("wyrzuca", PLAY_ONCE | PLAY_PRIO2, 0);
-	mesh_inst->groups[0].speed = 1.f;
 
 	if(Net::IsLocal())
 	{
@@ -380,7 +379,6 @@ void Unit::DropItem(ITEM_SLOT slot)
 
 	action = A_ANIMATION;
 	mesh_inst->Play("wyrzuca", PLAY_ONCE | PLAY_PRIO2, 0);
-	mesh_inst->groups[0].speed = 1.f;
 
 	if(Net::IsLocal())
 	{
@@ -439,7 +437,6 @@ bool Unit::DropItems(int index, uint count)
 
 	action = A_ANIMATION;
 	mesh_inst->Play("wyrzuca", PLAY_ONCE | PLAY_PRIO2, 0);
-	mesh_inst->groups[0].speed = 1.f;
 
 	if(Net::IsLocal())
 	{
@@ -731,7 +728,6 @@ void Unit::HideWeapon()
 		if(action == A_SHOOT)
 			game_level->FreeBowInstance(bow_instance);
 		mesh_inst->Play(GetTakeWeaponAnimation(weapon_taken == W_ONE_HANDED), PLAY_PRIO1 | PLAY_ONCE | PLAY_BACK, 1);
-		mesh_inst->groups[1].speed = 1.f;
 		weapon_hiding = weapon_taken;
 		weapon_taken = W_NONE;
 		animation_state = 0;
@@ -4580,7 +4576,6 @@ void Unit::CreateMesh(CREATE_MESH mode)
 				}
 			}
 
-			mesh_inst->groups[0].speed = 1.f;
 			if(mesh_inst->mesh->head.n_groups > 1)
 				mesh_inst->groups[1].state = 0;
 			if(human_data)
@@ -4814,10 +4809,7 @@ void Unit::BreakAction(BREAK_ACTION_MODE mode, bool notify, bool allow_animation
 		break;
 	case A_DASH:
 		if(animation_state == 1)
-		{
 			mesh_inst->Deactivate(1);
-			mesh_inst->groups[1].blend_max = 0.33f;
-		}
 		break;
 	}
 
@@ -5048,7 +5040,6 @@ void Unit::Standup()
 	if(anim)
 	{
 		mesh_inst->Play(anim, PLAY_ONCE | PLAY_PRIO3, 0);
-		mesh_inst->groups[0].speed = 1.f;
 		action = A_STAND_UP;
 		animation = ANI_PLAY;
 	}
@@ -5239,7 +5230,6 @@ void Unit::DropGold(int count)
 	// animacja wyrzucania
 	action = A_ANIMATION;
 	mesh_inst->Play("wyrzuca", PLAY_ONCE | PLAY_PRIO2, 0);
-	mesh_inst->groups[0].speed = 1.f;
 
 	if(Net::IsLocal())
 	{
@@ -5961,7 +5951,6 @@ void Unit::Talk(cstring text, int play_anim)
 	if(ani != 0)
 	{
 		mesh_inst->Play(ani == 1 ? "i_co" : "pokazuje", PLAY_ONCE | PLAY_PRIO2, 0);
-		mesh_inst->groups[0].speed = 1.f;
 		animation = ANI_PLAY;
 		action = A_ANIMATION;
 	}
@@ -6764,45 +6753,41 @@ void Unit::Update(float dt)
 		switch(animation)
 		{
 		case ANI_WALK:
-			mesh_inst->Play(NAMES::ani_move, PLAY_PRIO1 | PLAY_RESTORE, 0);
+			mesh_inst->Play(NAMES::ani_move, PLAY_PRIO1, 0);
 			if(!Net::IsClient())
 				mesh_inst->groups[0].speed = GetWalkSpeed() / data->walk_speed;
 			break;
 		case ANI_WALK_BACK:
-			mesh_inst->Play(NAMES::ani_move, PLAY_BACK | PLAY_PRIO1 | PLAY_RESTORE, 0);
+			mesh_inst->Play(NAMES::ani_move, PLAY_BACK | PLAY_PRIO1, 0);
 			if(!Net::IsClient())
 				mesh_inst->groups[0].speed = GetWalkSpeed() / data->walk_speed;
 			break;
 		case ANI_RUN:
-			mesh_inst->Play(NAMES::ani_run, PLAY_PRIO1 | PLAY_RESTORE, 0);
+			mesh_inst->Play(NAMES::ani_run, PLAY_PRIO1, 0);
 			if(!Net::IsClient())
 				mesh_inst->groups[0].speed = GetRunSpeed() / data->run_speed;
 			break;
 		case ANI_LEFT:
-			mesh_inst->Play(NAMES::ani_left, PLAY_PRIO1 | PLAY_RESTORE, 0);
+			mesh_inst->Play(NAMES::ani_left, PLAY_PRIO1, 0);
 			if(!Net::IsClient())
 				mesh_inst->groups[0].speed = GetRotationSpeed() / data->rot_speed;
 			break;
 		case ANI_RIGHT:
-			mesh_inst->Play(NAMES::ani_right, PLAY_PRIO1 | PLAY_RESTORE, 0);
+			mesh_inst->Play(NAMES::ani_right, PLAY_PRIO1, 0);
 			if(!Net::IsClient())
 				mesh_inst->groups[0].speed = GetRotationSpeed() / data->rot_speed;
 			break;
 		case ANI_STAND:
 			mesh_inst->Play(NAMES::ani_stand, PLAY_PRIO1, 0);
-			mesh_inst->groups[0].speed = 1.f;
 			break;
 		case ANI_BATTLE:
 			mesh_inst->Play(NAMES::ani_battle, PLAY_PRIO1, 0);
-			mesh_inst->groups[0].speed = 1.f;
 			break;
 		case ANI_BATTLE_BOW:
 			mesh_inst->Play(NAMES::ani_battle_bow, PLAY_PRIO1, 0);
-			mesh_inst->groups[0].speed = 1.f;
 			break;
 		case ANI_DIE:
 			mesh_inst->Play(NAMES::ani_die, PLAY_STOP_AT_END | PLAY_ONCE | PLAY_PRIO3, 0);
-			mesh_inst->groups[0].speed = 1.f;
 			break;
 		case ANI_PLAY:
 			break;
@@ -6810,7 +6795,6 @@ void Unit::Update(float dt)
 			break;
 		case ANI_KNEELS:
 			mesh_inst->Play("kleka", PLAY_STOP_AT_END | PLAY_ONCE | PLAY_PRIO3, 0);
-			mesh_inst->groups[0].speed = 1.f;
 			break;
 		default:
 			assert(0);
@@ -6826,7 +6810,6 @@ void Unit::Update(float dt)
 	if(animation == ANI_IDLE && mesh_inst->IsEnded())
 	{
 		mesh_inst->Play(NAMES::ani_stand, PLAY_PRIO1, 0);
-		mesh_inst->groups[0].speed = 1.f;
 		animation = ANI_STAND;
 	}
 
@@ -7198,7 +7181,8 @@ void Unit::Update(float dt)
 			{
 				if(Net::IsLocal() && IsAI())
 				{
-					mesh_inst->groups[index].speed = (1.f + GetAttackSpeed()) * GetStaminaAttackSpeedMod();
+					float speed = (1.f + GetAttackSpeed()) * GetStaminaAttackSpeedMod();
+					mesh_inst->groups[index].speed = speed;
 					attack_power = 2.f;
 					++animation_state;
 					if(Net::IsOnline())
@@ -7207,7 +7191,7 @@ void Unit::Update(float dt)
 						c.type = NetChange::ATTACK;
 						c.unit = this;
 						c.id = AID_Attack;
-						c.f[1] = mesh_inst->groups[index].speed;
+						c.f[1] = speed;
 					}
 				}
 				else
@@ -7772,10 +7756,7 @@ void Unit::Update(float dt)
 			if(timer <= 0 || t < 1.f || !ok)
 			{
 				if(animation_state == 1)
-				{
 					mesh_inst->Deactivate(1);
-					mesh_inst->groups[1].blend_max = 0.33f;
-				}
 				action = A_NONE;
 				if(Net::IsLocal() || IsLocalPlayer())
 					mesh_inst->groups[0].speed = GetRunSpeed() / data->run_speed;

@@ -3425,12 +3425,10 @@ bool Game::DoShieldSmash(LevelArea& area, Unit& attacker)
 		if(hitted->mesh_inst->mesh->head.n_groups == 2)
 		{
 			hitted->mesh_inst->Play(NAMES::ani_hurt, PLAY_PRIO1 | PLAY_ONCE, 1);
-			hitted->mesh_inst->groups[1].speed = 1.f;
 		}
 		else
 		{
 			hitted->mesh_inst->Play(NAMES::ani_hurt, PLAY_PRIO3 | PLAY_ONCE, 0);
-			hitted->mesh_inst->groups[0].speed = 1.f;
 			hitted->animation = ANI_PLAY;
 		}
 
@@ -3625,7 +3623,6 @@ void Game::UpdateBullets(LevelArea& area, float dt)
 							else
 							{
 								hitted->mesh_inst->Play(NAMES::ani_hurt, PLAY_PRIO3 | PLAY_ONCE, 0);
-								hitted->mesh_inst->groups[0].speed = 1.f;
 								hitted->animation = ANI_PLAY;
 							}
 						}
@@ -4136,7 +4133,6 @@ Game::ATTACK_RESULT Game::DoGenericAttack(LevelArea& area, Unit& attacker, Unit&
 				else
 				{
 					hitted.mesh_inst->Play(NAMES::ani_hurt, PLAY_PRIO3 | PLAY_ONCE, 0);
-					hitted.mesh_inst->groups[0].speed = 1.f;
 					hitted.animation = ANI_PLAY;
 				}
 			}

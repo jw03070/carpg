@@ -755,78 +755,65 @@ void CreateCharacterPanel::UpdateUnit(float dt)
 			break;
 		case DA_BLOCK:
 			unit->mesh_inst->Play(NAMES::ani_block, PLAY_PRIO2, 0);
-			unit->mesh_inst->groups[0].speed = 1.f;
 			t = 1.f;
 			break;
 		case DA_BATTLE_MODE:
 			unit->mesh_inst->Play(NAMES::ani_battle, PLAY_PRIO2, 0);
-			unit->mesh_inst->groups[0].speed = 1.f;
 			t = 1.f;
 			break;
 		case DA_WALK:
 			unit->mesh_inst->Play(NAMES::ani_move, PLAY_PRIO2, 0);
-			unit->mesh_inst->groups[0].speed = 1.f;
 			t = 2.f;
 			break;
 		case DA_LOOKS_AROUND:
 			unit->mesh_inst->Play("rozglada", PLAY_PRIO2 | PLAY_ONCE, 0);
-			unit->mesh_inst->groups[0].speed = 1.f;
 			t = 100.f;
 			break;
 		case DA_HIDE_WEAPON:
 			unit->mesh_inst->Play(unit->GetTakeWeaponAnimation(true), PLAY_PRIO2 | PLAY_ONCE | PLAY_BACK, 0);
-			unit->mesh_inst->groups[1].speed = 1.f;
-			unit->mesh_inst->groups[0].speed = 1.f;
-			t = 100.f;
 			unit->animation_state = 0;
 			unit->weapon_state = WS_HIDING;
 			unit->weapon_taken = W_NONE;
 			unit->weapon_hiding = W_ONE_HANDED;
+			t = 100.f;
 			break;
 		case DA_HIDE_BOW:
 			unit->mesh_inst->Play(NAMES::ani_take_bow, PLAY_PRIO2 | PLAY_ONCE | PLAY_BACK, 0);
-			unit->mesh_inst->groups[1].speed = 1.f;
-			unit->mesh_inst->groups[0].speed = 1.f;
-			t = 100.f;
 			unit->animation_state = 0;
 			unit->weapon_state = WS_HIDING;
 			unit->weapon_taken = W_NONE;
 			unit->weapon_hiding = W_BOW;
+			t = 100.f;
 			break;
 		case DA_STAND:
 			unit->mesh_inst->Play(NAMES::ani_stand, PLAY_PRIO2, 0);
-			unit->mesh_inst->groups[0].speed = 1.f;
 			t = 2.f;
 			break;
 		case DA_SHOOT:
 			unit->mesh_inst->Play(NAMES::ani_shoot, PLAY_PRIO2 | PLAY_ONCE, 0);
 			unit->mesh_inst->groups[0].speed = unit->GetBowAttackSpeed();
 			unit->animation_state = 0;
-			t = 100.f;
 			unit->bow_instance = game_level->GetBowInstance(unit->GetBow().mesh);
 			unit->bow_instance->Play(&unit->bow_instance->mesh->anims[0], PLAY_ONCE | PLAY_PRIO1 | PLAY_NO_BLEND, 0);
 			unit->bow_instance->groups[0].speed = unit->mesh_inst->groups[0].speed;
 			unit->action = A_SHOOT;
+			t = 100.f;
 			break;
 		case DA_SHOW_WEAPON:
 			unit->mesh_inst->Play(unit->GetTakeWeaponAnimation(true), PLAY_PRIO2 | PLAY_ONCE, 0);
-			unit->mesh_inst->groups[1].speed = 1.f;
-			unit->mesh_inst->groups[0].speed = 1.f;
-			t = 100.f;
 			unit->animation_state = 0;
 			unit->weapon_state = WS_TAKING;
 			unit->weapon_taken = W_ONE_HANDED;
 			unit->weapon_hiding = W_NONE;
+			t = 100.f;
 			break;
 		case DA_SHOW_BOW:
 			unit->mesh_inst->Play(NAMES::ani_take_bow, PLAY_PRIO2 | PLAY_ONCE, 0);
-			unit->mesh_inst->groups[1].speed = 1.f;
-			unit->mesh_inst->groups[0].speed = 1.f;
-			t = 100.f;
 			unit->animation_state = 0;
 			unit->weapon_state = WS_TAKING;
 			unit->weapon_taken = W_BOW;
 			unit->weapon_hiding = W_NONE;
+			t = 100.f;
 			break;
 		default:
 			assert(0);
@@ -839,7 +826,6 @@ void CreateCharacterPanel::UpdateUnit(float dt)
 	case DA_ATTACK:
 		if(unit->mesh_inst->IsEnded())
 		{
-			unit->mesh_inst->groups[0].speed = 1.f;
 			if(Rand() % 2 == 0)
 			{
 				anim = DA_ATTACK;
@@ -870,7 +856,6 @@ void CreateCharacterPanel::UpdateUnit(float dt)
 			if(unit->mesh_inst->IsEnded())
 			{
 				game_level->FreeBowInstance(unit->bow_instance);
-				unit->mesh_inst->groups[0].speed = 1.f;
 				unit->action = A_NONE;
 				if(Rand() % 2 == 0)
 				{
@@ -1010,7 +995,6 @@ void CreateCharacterPanel::SetCharacter()
 {
 	anim = anim2 = DA_STAND;
 	unit->mesh_inst->Play(NAMES::ani_stand, PLAY_PRIO2 | PLAY_NO_BLEND, 0);
-	unit->mesh_inst->groups[0].speed = 1.f;
 }
 
 //=================================================================================================

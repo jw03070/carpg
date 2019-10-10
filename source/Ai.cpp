@@ -1061,7 +1061,6 @@ void Game::UpdateAi(float dt)
 									ai.timer = Random(2.f, 5.f);
 									ai.idle_action = AIController::Idle_Animation;
 									u.mesh_inst->Play(u.data->idles->anims[id].c_str(), PLAY_ONCE, 0);
-									u.mesh_inst->groups[0].speed = 1.f;
 									u.animation = ANI_IDLE;
 									if(Net::IsOnline())
 									{
@@ -1248,7 +1247,6 @@ void Game::UpdateAi(float dt)
 										{
 											ani = Rand() % 2 + 1;
 											u.mesh_inst->Play(ani == 1 ? "i_co" : "pokazuje", PLAY_ONCE | PLAY_PRIO2, 0);
-											u.mesh_inst->groups[0].speed = 1.f;
 											u.animation = ANI_PLAY;
 											u.action = A_ANIMATION;
 										}
@@ -1361,7 +1359,6 @@ void Game::UpdateAi(float dt)
 											}
 											else
 												u.mesh_inst->Play(base.anim.c_str(), PLAY_PRIO1, 0);
-											u.mesh_inst->groups[0].speed = 1.f;
 											u.UseUsable(&use);
 											u.target_pos = u.pos;
 											u.target_pos2 = use.pos;
@@ -1450,13 +1447,13 @@ void Game::UpdateAi(float dt)
 									{
 										// bow shooting
 										float speed = u.GetBowAttackSpeed();
-										u.mesh_inst->Play(NAMES::ani_shoot, PLAY_PRIO1 | PLAY_ONCE | PLAY_RESTORE, 1);
+										u.mesh_inst->Play(NAMES::ani_shoot, PLAY_PRIO1 | PLAY_ONCE, 1);
 										u.mesh_inst->groups[1].speed = speed;
 										u.action = A_SHOOT;
 										u.animation_state = 1;
 										u.hitted = false;
 										u.bow_instance = game_level->GetBowInstance(u.GetBow().mesh);
-										u.bow_instance->Play(&u.bow_instance->mesh->anims[0], PLAY_ONCE | PLAY_PRIO1 | PLAY_NO_BLEND | PLAY_RESTORE, 0);
+										u.bow_instance->Play(&u.bow_instance->mesh->anims[0], PLAY_ONCE | PLAY_PRIO1 | PLAY_NO_BLEND, 0);
 										u.bow_instance->groups[0].speed = speed;
 										u.RemoveStamina(Unit::STAMINA_BOW_ATTACK);
 
@@ -1685,7 +1682,6 @@ void Game::UpdateAi(float dt)
 										else
 										{
 											u.mesh_inst->Play("cast", PLAY_ONCE | PLAY_PRIO1, 0);
-											u.mesh_inst->groups[0].speed = 1.f;
 											u.animation = ANI_PLAY;
 										}
 
@@ -1739,13 +1735,13 @@ void Game::UpdateAi(float dt)
 							{
 								// bowshot
 								float speed = u.GetBowAttackSpeed();
-								u.mesh_inst->Play(NAMES::ani_shoot, PLAY_PRIO1 | PLAY_ONCE | PLAY_RESTORE, 1);
+								u.mesh_inst->Play(NAMES::ani_shoot, PLAY_PRIO1 | PLAY_ONCE, 1);
 								u.mesh_inst->groups[1].speed = speed;
 								u.action = A_SHOOT;
 								u.animation_state = 1;
 								u.hitted = false;
 								u.bow_instance = game_level->GetBowInstance(u.GetBow().mesh);
-								u.bow_instance->Play(&u.bow_instance->mesh->anims[0], PLAY_ONCE | PLAY_PRIO1 | PLAY_NO_BLEND | PLAY_RESTORE, 0);
+								u.bow_instance->Play(&u.bow_instance->mesh->anims[0], PLAY_ONCE | PLAY_PRIO1 | PLAY_NO_BLEND, 0);
 								u.bow_instance->groups[0].speed = speed;
 								u.RemoveStamina(Unit::STAMINA_BOW_ATTACK);
 
@@ -1833,7 +1829,7 @@ void Game::UpdateAi(float dt)
 									ai.timer = BLOCK_TIMER;
 									ai.ignore = 0.f;
 									u.action = A_BLOCK;
-									u.mesh_inst->Play(NAMES::ani_block, PLAY_PRIO1 | PLAY_STOP_AT_END | PLAY_RESTORE, 1);
+									u.mesh_inst->Play(NAMES::ani_block, PLAY_PRIO1 | PLAY_STOP_AT_END, 1);
 									u.mesh_inst->groups[1].blend_max = speed;
 									u.animation_state = 0;
 
@@ -2234,7 +2230,7 @@ void Game::UpdateAi(float dt)
 								float speed = u.GetBashSpeed();
 								u.action = A_BASH;
 								u.animation_state = 0;
-								u.mesh_inst->Play(NAMES::ani_bash, PLAY_ONCE | PLAY_PRIO1 | PLAY_RESTORE, 1);
+								u.mesh_inst->Play(NAMES::ani_bash, PLAY_ONCE | PLAY_PRIO1, 1);
 								u.mesh_inst->groups[1].speed = speed;
 								u.hitted = false;
 								u.RemoveStamina(Unit::STAMINA_BASH_ATTACK);
@@ -2378,7 +2374,6 @@ void Game::UpdateAi(float dt)
 						else
 						{
 							u.mesh_inst->Play("cast", PLAY_ONCE | PLAY_PRIO1, 0);
-							u.mesh_inst->groups[0].speed = 1.f;
 							u.animation = ANI_PLAY;
 						}
 

@@ -688,7 +688,7 @@ bool Net::ProcessControlMessageClient(BitStreamReader& f, bool& exit_from_server
 						unit.action = A_ATTACK;
 						unit.attack_id = ((typeflags & 0xF0) >> 4);
 						unit.attack_power = 1.f;
-						unit.mesh_inst->Play(NAMES::ani_attacks[unit.attack_id], PLAY_PRIO1 | PLAY_ONCE | PLAY_RESTORE, group);
+						unit.mesh_inst->Play(NAMES::ani_attacks[unit.attack_id], PLAY_PRIO1 | PLAY_ONCE, group);
 						unit.mesh_inst->groups[group].speed = attack_speed;
 						unit.animation_state = 1;
 						unit.hitted = false;
@@ -701,7 +701,7 @@ bool Net::ProcessControlMessageClient(BitStreamReader& f, bool& exit_from_server
 						unit.action = A_ATTACK;
 						unit.attack_id = ((typeflags & 0xF0) >> 4);
 						unit.attack_power = 1.f;
-						unit.mesh_inst->Play(NAMES::ani_attacks[unit.attack_id], PLAY_PRIO1 | PLAY_ONCE | PLAY_RESTORE, group);
+						unit.mesh_inst->Play(NAMES::ani_attacks[unit.attack_id], PLAY_PRIO1 | PLAY_ONCE, group);
 						unit.mesh_inst->groups[group].speed = attack_speed;
 						unit.animation_state = 0;
 						unit.hitted = false;
@@ -713,7 +713,7 @@ bool Net::ProcessControlMessageClient(BitStreamReader& f, bool& exit_from_server
 						unit.animation_state = 1;
 					else
 					{
-						unit.mesh_inst->Play(NAMES::ani_shoot, PLAY_PRIO1 | PLAY_ONCE | PLAY_RESTORE, group);
+						unit.mesh_inst->Play(NAMES::ani_shoot, PLAY_PRIO1 | PLAY_ONCE, group);
 						unit.mesh_inst->groups[group].speed = attack_speed;
 						unit.action = A_SHOOT;
 						unit.animation_state = (type == AID_Shoot ? 1 : 0);
@@ -727,9 +727,8 @@ bool Net::ProcessControlMessageClient(BitStreamReader& f, bool& exit_from_server
 				case AID_Block:
 					{
 						unit.action = A_BLOCK;
-						unit.mesh_inst->Play(NAMES::ani_block, PLAY_PRIO1 | PLAY_STOP_AT_END | PLAY_RESTORE, group);
-						unit.mesh_inst->groups[1].speed = 1.f;
-						unit.mesh_inst->groups[1].blend_max = attack_speed;
+						unit.mesh_inst->Play(NAMES::ani_block, PLAY_PRIO1 | PLAY_STOP_AT_END, group);
+						unit.mesh_inst->groups[group].blend_max = attack_speed;
 						unit.animation_state = 0;
 					}
 					break;
@@ -737,8 +736,8 @@ bool Net::ProcessControlMessageClient(BitStreamReader& f, bool& exit_from_server
 					{
 						unit.action = A_BASH;
 						unit.animation_state = 0;
-						unit.mesh_inst->Play(NAMES::ani_bash, PLAY_ONCE | PLAY_PRIO1 | PLAY_RESTORE, group);
-						unit.mesh_inst->groups[1].speed = attack_speed;
+						unit.mesh_inst->Play(NAMES::ani_bash, PLAY_ONCE | PLAY_PRIO1, group);
+						unit.mesh_inst->groups[group].speed = attack_speed;
 						unit.hitted = false;
 					}
 					break;
@@ -750,7 +749,7 @@ bool Net::ProcessControlMessageClient(BitStreamReader& f, bool& exit_from_server
 						unit.attack_id = ((typeflags & 0xF0) >> 4);
 						unit.attack_power = 1.5f;
 						unit.run_attack = true;
-						unit.mesh_inst->Play(NAMES::ani_attacks[unit.attack_id], PLAY_PRIO1 | PLAY_ONCE | PLAY_RESTORE, group);
+						unit.mesh_inst->Play(NAMES::ani_attacks[unit.attack_id], PLAY_PRIO1 | PLAY_ONCE, group);
 						unit.mesh_inst->groups[group].speed = attack_speed;
 						unit.animation_state = 1;
 						unit.hitted = false;
@@ -760,7 +759,6 @@ bool Net::ProcessControlMessageClient(BitStreamReader& f, bool& exit_from_server
 					{
 						unit.action = A_NONE;
 						unit.mesh_inst->Deactivate(group);
-						unit.mesh_inst->groups[1].speed = 1.f;
 					}
 					break;
 				}
@@ -976,7 +974,6 @@ bool Net::ProcessControlMessageClient(BitStreamReader& f, bool& exit_from_server
 					{
 						unit->action = A_ANIMATION;
 						unit->mesh_inst->Play("wyrzuca", PLAY_ONCE | PLAY_PRIO2, 0);
-						unit->mesh_inst->groups[0].speed = 1.f;
 					}
 				}
 			}
@@ -1018,7 +1015,6 @@ bool Net::ProcessControlMessageClient(BitStreamReader& f, bool& exit_from_server
 						unit->action = A_PICKUP;
 						unit->animation = ANI_PLAY;
 						unit->mesh_inst->Play(up_animation ? "podnosi_gora" : "podnosi", PLAY_ONCE | PLAY_PRIO2, 0);
-						unit->mesh_inst->groups[0].speed = 1.f;
 					}
 				}
 			}
@@ -1115,7 +1111,6 @@ bool Net::ProcessControlMessageClient(BitStreamReader& f, bool& exit_from_server
 						else
 						{
 							unit->mesh_inst->Play(NAMES::ani_hurt, PLAY_PRIO3 | PLAY_ONCE, 0);
-							unit->mesh_inst->groups[0].speed = 1.f;
 							unit->animation = ANI_PLAY;
 						}
 					}
@@ -1247,7 +1242,6 @@ bool Net::ProcessControlMessageClient(BitStreamReader& f, bool& exit_from_server
 					else
 					{
 						unit->mesh_inst->Play(unit->data->idles->anims[animation_index].c_str(), PLAY_ONCE, 0);
-						unit->mesh_inst->groups[0].speed = 1.f;
 						unit->animation = ANI_IDLE;
 					}
 				}
@@ -1281,7 +1275,6 @@ bool Net::ProcessControlMessageClient(BitStreamReader& f, bool& exit_from_server
 						if(animation != 0)
 						{
 							unit->mesh_inst->Play(animation == 1 ? "i_co" : "pokazuje", PLAY_ONCE | PLAY_PRIO2, 0);
-							unit->mesh_inst->groups[0].speed = 1.f;
 							unit->animation = ANI_PLAY;
 							unit->action = A_ANIMATION;
 						}
@@ -1462,7 +1455,6 @@ bool Net::ProcessControlMessageClient(BitStreamReader& f, bool& exit_from_server
 							pc.unit->HealPoison();
 							pc.unit->live_state = Unit::ALIVE;
 							pc.unit->mesh_inst->Play("wstaje2", PLAY_ONCE | PLAY_PRIO3, 0);
-							pc.unit->mesh_inst->groups[0].speed = 1.f;
 							pc.unit->action = A_ANIMATION;
 							pc.unit->animation = ANI_PLAY;
 						}
@@ -1721,7 +1713,6 @@ bool Net::ProcessControlMessageClient(BitStreamReader& f, bool& exit_from_server
 						unit->action = A_ANIMATION2;
 						unit->animation = ANI_PLAY;
 						unit->mesh_inst->Play(state == USE_USABLE_START_SPECIAL ? "czyta_papiery" : base.anim.c_str(), PLAY_PRIO1, 0);
-						unit->mesh_inst->groups[0].speed = 1.f;
 						unit->target_pos = unit->pos;
 						unit->target_pos2 = usable->pos;
 						if(base.limit_rot == 4)
@@ -2355,7 +2346,6 @@ bool Net::ProcessControlMessageClient(BitStreamReader& f, bool& exit_from_server
 						{
 							unit->animation = ANI_PLAY;
 							unit->mesh_inst->Play("cast", PLAY_ONCE | PLAY_PRIO1, 0);
-							unit->mesh_inst->groups[0].speed = 1.f;
 						}
 					}
 				}
