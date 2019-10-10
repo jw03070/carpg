@@ -11,7 +11,6 @@
 #include "Spell.h"
 #include "Trap.h"
 #include "QuestManager.h"
-#include "Action.h"
 #include "UnitGroup.h"
 #include "SoundManager.h"
 #include "ScriptManager.h"
@@ -23,7 +22,6 @@
 #include "SuperShader.h"
 #include "Arena.h"
 #include "ResourceManager.h"
-#include "Building.h"
 #include "GameGui.h"
 #include "SaveLoadPanel.h"
 #include "DebugDrawer.h"
@@ -266,6 +264,7 @@ void Game::LoadLanguageFiles()
 	arena->LoadLanguage();
 	game_gui->LoadLanguage();
 	game_level->LoadLanguage();
+	game_res->LoadLanguage();
 	net->LoadLanguage();
 	quest_mgr->LoadLanguage();
 	world->LoadLanguage();
@@ -505,68 +504,7 @@ void Game::AddLoadTasks()
 
 	bool nomusic = sound_mgr->IsMusicDisabled();
 
-	// gui textures
-	res_mgr->AddTaskCategory(txLoadGuiTextures);
-	tBlack = res_mgr->Load<Texture>("czern.bmp");
-	tPortal = res_mgr->Load<Texture>("dark_portal.png");
-	tWarning = res_mgr->Load<Texture>("warning.png");
-	tError = res_mgr->Load<Texture>("error.png");
-	Action::LoadData();
-
-	// preload terrain textures
-	tGrass = res_mgr->Load<Texture>("trawa.jpg");
-	tGrass2 = res_mgr->Load<Texture>("Grass0157_5_S.jpg");
-	tGrass3 = res_mgr->Load<Texture>("LeavesDead0045_1_S.jpg");
-	tRoad = res_mgr->Load<Texture>("droga.jpg");
-	tFootpath = res_mgr->Load<Texture>("ziemia.jpg");
-	tField = res_mgr->Load<Texture>("pole.jpg");
-	tFloorBase.diffuse = res_mgr->Load<Texture>("droga.jpg");
-	tFloorBase.normal = nullptr;
-	tFloorBase.specular = nullptr;
-	tWallBase.diffuse = res_mgr->Load<Texture>("sciana.jpg");
-	tWallBase.normal = res_mgr->Load<Texture>("sciana_nrm.jpg");
-	tWallBase.specular = res_mgr->Load<Texture>("sciana_spec.jpg");
-	tCeilBase.diffuse = res_mgr->Load<Texture>("sufit.jpg");
-	tCeilBase.normal = nullptr;
-	tCeilBase.specular = nullptr;
-	BaseLocation::PreloadTextures();
-
-	// particles
-	res_mgr->AddTaskCategory(txLoadParticles);
-	tBlood[BLOOD_RED] = res_mgr->Load<Texture>("krew.png");
-	tBlood[BLOOD_GREEN] = res_mgr->Load<Texture>("krew2.png");
-	tBlood[BLOOD_BLACK] = res_mgr->Load<Texture>("krew3.png");
-	tBlood[BLOOD_BONE] = res_mgr->Load<Texture>("iskra.png");
-	tBlood[BLOOD_ROCK] = res_mgr->Load<Texture>("kamien.png");
-	tBlood[BLOOD_IRON] = res_mgr->Load<Texture>("iskra.png");
-	tBloodSplat[BLOOD_RED] = res_mgr->Load<Texture>("krew_slad.png");
-	tBloodSplat[BLOOD_GREEN] = res_mgr->Load<Texture>("krew_slad2.png");
-	tBloodSplat[BLOOD_BLACK] = res_mgr->Load<Texture>("krew_slad3.png");
-	tBloodSplat[BLOOD_BONE] = nullptr;
-	tBloodSplat[BLOOD_ROCK] = nullptr;
-	tBloodSplat[BLOOD_IRON] = nullptr;
-	tSpark = res_mgr->Load<Texture>("iskra.png");
-	tSpawn = res_mgr->Load<Texture>("spawn_fog.png");
-	tLightingLine = res_mgr->Load<Texture>("lighting_line.png");
-
-	// physic meshes
-	res_mgr->AddTaskCategory(txLoadPhysicMeshes);
-	vdStairsUp = res_mgr->Load<VertexData>("schody_gora.phy");
-	vdStairsDown = res_mgr->Load<VertexData>("schody_dol.phy");
-	vdDoorHole = res_mgr->Load<VertexData>("nadrzwi.phy");
-
-	// models
-	res_mgr->AddTaskCategory(txLoadModels);
 	game_res->LoadData();
-
-	// preload buildings
-	for(Building* b : Building::buildings)
-	{
-		if(b->mesh)
-			res_mgr->LoadMeshMetadata(b->mesh);
-		if(b->inside_mesh)
-			res_mgr->LoadMeshMetadata(b->inside_mesh);
-	}
 
 	// preload traps
 	for(uint i = 0; i < BaseTrap::n_traps; ++i)
