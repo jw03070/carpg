@@ -3424,13 +3424,11 @@ bool Game::DoShieldSmash(LevelArea& area, Unit& attacker)
 
 		if(hitted->mesh_inst->mesh->head.n_groups == 2)
 		{
-			hitted->mesh_inst->frame_end_info2 = false;
 			hitted->mesh_inst->Play(NAMES::ani_hurt, PLAY_PRIO1 | PLAY_ONCE, 1);
 			hitted->mesh_inst->groups[1].speed = 1.f;
 		}
 		else
 		{
-			hitted->mesh_inst->frame_end_info = false;
 			hitted->mesh_inst->Play(NAMES::ani_hurt, PLAY_PRIO3 | PLAY_ONCE, 0);
 			hitted->mesh_inst->groups[0].speed = 1.f;
 			hitted->animation = ANI_PLAY;
@@ -3623,13 +3621,9 @@ void Game::UpdateBullets(LevelArea& area, float dt)
 								hitted->animation_state = 1;
 
 							if(hitted->mesh_inst->mesh->head.n_groups == 2)
-							{
-								hitted->mesh_inst->frame_end_info2 = false;
 								hitted->mesh_inst->Play(NAMES::ani_hurt, PLAY_PRIO1 | PLAY_ONCE, 1);
-							}
 							else
 							{
-								hitted->mesh_inst->frame_end_info = false;
 								hitted->mesh_inst->Play(NAMES::ani_hurt, PLAY_PRIO3 | PLAY_ONCE, 0);
 								hitted->mesh_inst->groups[0].speed = 1.f;
 								hitted->animation = ANI_PLAY;
@@ -4138,13 +4132,9 @@ Game::ATTACK_RESULT Game::DoGenericAttack(LevelArea& area, Unit& attacker, Unit&
 					hitted.animation_state = 1;
 
 				if(hitted.mesh_inst->mesh->head.n_groups == 2)
-				{
-					hitted.mesh_inst->frame_end_info2 = false;
 					hitted.mesh_inst->Play(NAMES::ani_hurt, PLAY_PRIO1 | PLAY_ONCE, 1);
-				}
 				else
 				{
-					hitted.mesh_inst->frame_end_info = false;
 					hitted.mesh_inst->Play(NAMES::ani_hurt, PLAY_PRIO3 | PLAY_ONCE, 0);
 					hitted.mesh_inst->groups[0].speed = 1.f;
 					hitted.animation = ANI_PLAY;
@@ -5542,23 +5532,25 @@ void Game::UpdateArea(LevelArea& area, float dt)
 		door.mesh_inst->Update(dt);
 		if(door.state == Door::Opening || door.state == Door::Opening2)
 		{
+			bool done = door.mesh_inst->IsEnded();
 			if(door.state == Door::Opening)
 			{
-				if(door.mesh_inst->frame_end_info || door.mesh_inst->GetProgress() >= 0.25f)
+				if(done || door.mesh_inst->GetProgress() >= 0.25f)
 				{
 					door.state = Door::Opening2;
 					btVector3& pos = door.phy->getWorldTransform().getOrigin();
 					pos.setY(pos.y() - 100.f);
 				}
 			}
-			if(door.mesh_inst->frame_end_info)
+			if(done)
 				door.state = Door::Open;
 		}
 		else if(door.state == Door::Closing || door.state == Door::Closing2)
 		{
+			bool done = door.mesh_inst->IsEnded();
 			if(door.state == Door::Closing)
 			{
-				if(door.mesh_inst->frame_end_info || door.mesh_inst->GetProgress() <= 0.25f)
+				if(done || door.mesh_inst->GetProgress() <= 0.25f)
 				{
 					bool blocking = false;
 
@@ -5579,7 +5571,7 @@ void Game::UpdateArea(LevelArea& area, float dt)
 					}
 				}
 			}
-			if(door.mesh_inst->frame_end_info)
+			if(done)
 			{
 				if(door.state == Door::Closing2)
 					door.state = Door::Closed;
@@ -5588,7 +5580,6 @@ void Game::UpdateArea(LevelArea& area, float dt)
 					// nie mo¿na zamknaæ drzwi bo coœ blokuje
 					door.state = Door::Opening2;
 					door.mesh_inst->Play(&door.mesh_inst->mesh->anims[0], PLAY_ONCE | PLAY_NO_BLEND | PLAY_STOP_AT_END, 0);
-					door.mesh_inst->frame_end_info = false;
 					// mo¿na by daæ lepszy punkt dŸwiêku
 					sound_mgr->PlaySound3d(sDoorBudge, door.pos, Door::BLOCKED_SOUND_DIST);
 				}

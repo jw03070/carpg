@@ -49,7 +49,7 @@ void Door::Load(FileReader& f, bool local)
 	if(local)
 	{
 		mesh_inst = new MeshInstance(door2 ? game->aDoor2 : game->aDoor);
-		mesh_inst->Load(f);
+		mesh_inst->Load(f, LOAD_VERSION >= V_DEV ? 1 : 0);
 
 		phy = new btCollisionObject;
 		phy->setCollisionShape(game_level->shape_door);

@@ -1879,7 +1879,6 @@ void PlayerController::UseAction(bool from_server, const Vec3* pos, Unit* target
 		unit->action = A_CAST;
 		unit->attack_id = -1;
 		unit->animation_state = 0;
-		unit->mesh_inst->frame_end_info2 = false;
 		unit->mesh_inst->Play("cast", PLAY_ONCE | PLAY_PRIO1, 1);
 		if(is_local)
 		{
@@ -3034,7 +3033,6 @@ void PlayerController::UpdateMove(float dt, bool allow_rot)
 						game_level->minimap_opened_doors = true;
 					door->state = Door::Opening;
 					door->mesh_inst->Play(&door->mesh_inst->mesh->anims[0], PLAY_ONCE | PLAY_STOP_AT_END | PLAY_NO_BLEND, 0);
-					door->mesh_inst->frame_end_info = false;
 					if(Rand() % 2 == 0)
 						sound_mgr->PlaySound3d(game->sDoor[Rand() % 3], door->GetCenter(), Door::SOUND_DIST);
 					if(Net::IsOnline())
@@ -3072,7 +3070,6 @@ void PlayerController::UpdateMove(float dt, bool allow_rot)
 						door->locked = LOCK_NONE;
 						door->state = Door::Opening;
 						door->mesh_inst->Play(&door->mesh_inst->mesh->anims[0], PLAY_ONCE | PLAY_STOP_AT_END | PLAY_NO_BLEND, 0);
-						door->mesh_inst->frame_end_info = false;
 						if(Rand() % 2 == 0)
 							sound_mgr->PlaySound3d(game->sDoor[Rand() % 3], center, Door::SOUND_DIST);
 						if(Net::IsOnline())
@@ -3095,7 +3092,6 @@ void PlayerController::UpdateMove(float dt, bool allow_rot)
 				// zamykanie drzwi
 				door->state = Door::Closing;
 				door->mesh_inst->Play(&door->mesh_inst->mesh->anims[0], PLAY_ONCE | PLAY_STOP_AT_END | PLAY_NO_BLEND | PLAY_BACK, 0);
-				door->mesh_inst->frame_end_info = false;
 				if(Rand() % 2 == 0)
 				{
 					Sound* sound;
@@ -3126,7 +3122,6 @@ void PlayerController::UpdateMove(float dt, bool allow_rot)
 				u.animation = ANI_PLAY;
 				u.mesh_inst->Play(up_anim ? "podnosi_gora" : "podnosi", PLAY_ONCE | PLAY_PRIO2, 0);
 				u.mesh_inst->groups[0].speed = 1.f;
-				u.mesh_inst->frame_end_info = false;
 
 				if(Net::IsLocal())
 				{
@@ -3244,7 +3239,6 @@ void PlayerController::UpdateMove(float dt, bool allow_rot)
 				{
 					// stop blocking
 					u.action = A_NONE;
-					u.mesh_inst->frame_end_info2 = false;
 					u.mesh_inst->Deactivate(1);
 
 					if(Net::IsOnline())
@@ -3266,7 +3260,6 @@ void PlayerController::UpdateMove(float dt, bool allow_rot)
 						u.animation_state = 0;
 						u.mesh_inst->Play(NAMES::ani_bash, PLAY_ONCE | PLAY_PRIO1 | PLAY_RESTORE, 1);
 						u.mesh_inst->groups[1].speed = speed;
-						u.mesh_inst->frame_end_info2 = false;
 						u.hitted = false;
 
 						if(Net::IsOnline())
@@ -3511,7 +3504,6 @@ void PlayerController::UpdateMove(float dt, bool allow_rot)
 				idle_timer = Random(0.f, 0.5f);
 				u.mesh_inst->Play(u.data->idles->anims[id].c_str(), PLAY_ONCE, 0);
 				u.mesh_inst->groups[0].speed = 1.f;
-				u.mesh_inst->frame_end_info = false;
 				u.animation = ANI_IDLE;
 
 				if(Net::IsOnline())

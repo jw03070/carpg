@@ -752,7 +752,6 @@ void CreateCharacterPanel::UpdateUnit(float dt)
 			unit->mesh_inst->groups[0].speed = unit->GetAttackSpeed();
 			unit->animation_state = 0;
 			t = 100.f;
-			unit->mesh_inst->frame_end_info = false;
 			break;
 		case DA_BLOCK:
 			unit->mesh_inst->Play(NAMES::ani_block, PLAY_PRIO2, 0);
@@ -773,7 +772,6 @@ void CreateCharacterPanel::UpdateUnit(float dt)
 			unit->mesh_inst->Play("rozglada", PLAY_PRIO2 | PLAY_ONCE, 0);
 			unit->mesh_inst->groups[0].speed = 1.f;
 			t = 100.f;
-			unit->mesh_inst->frame_end_info = false;
 			break;
 		case DA_HIDE_WEAPON:
 			unit->mesh_inst->Play(unit->GetTakeWeaponAnimation(true), PLAY_PRIO2 | PLAY_ONCE | PLAY_BACK, 0);
@@ -784,7 +782,6 @@ void CreateCharacterPanel::UpdateUnit(float dt)
 			unit->weapon_state = WS_HIDING;
 			unit->weapon_taken = W_NONE;
 			unit->weapon_hiding = W_ONE_HANDED;
-			unit->mesh_inst->frame_end_info = false;
 			break;
 		case DA_HIDE_BOW:
 			unit->mesh_inst->Play(NAMES::ani_take_bow, PLAY_PRIO2 | PLAY_ONCE | PLAY_BACK, 0);
@@ -795,7 +792,6 @@ void CreateCharacterPanel::UpdateUnit(float dt)
 			unit->weapon_state = WS_HIDING;
 			unit->weapon_taken = W_NONE;
 			unit->weapon_hiding = W_BOW;
-			unit->mesh_inst->frame_end_info = false;
 			break;
 		case DA_STAND:
 			unit->mesh_inst->Play(NAMES::ani_stand, PLAY_PRIO2, 0);
@@ -810,7 +806,6 @@ void CreateCharacterPanel::UpdateUnit(float dt)
 			unit->bow_instance = game_level->GetBowInstance(unit->GetBow().mesh);
 			unit->bow_instance->Play(&unit->bow_instance->mesh->anims[0], PLAY_ONCE | PLAY_PRIO1 | PLAY_NO_BLEND, 0);
 			unit->bow_instance->groups[0].speed = unit->mesh_inst->groups[0].speed;
-			unit->mesh_inst->frame_end_info = false;
 			unit->action = A_SHOOT;
 			break;
 		case DA_SHOW_WEAPON:
@@ -822,7 +817,6 @@ void CreateCharacterPanel::UpdateUnit(float dt)
 			unit->weapon_state = WS_TAKING;
 			unit->weapon_taken = W_ONE_HANDED;
 			unit->weapon_hiding = W_NONE;
-			unit->mesh_inst->frame_end_info = false;
 			break;
 		case DA_SHOW_BOW:
 			unit->mesh_inst->Play(NAMES::ani_take_bow, PLAY_PRIO2 | PLAY_ONCE, 0);
@@ -833,7 +827,6 @@ void CreateCharacterPanel::UpdateUnit(float dt)
 			unit->weapon_state = WS_TAKING;
 			unit->weapon_taken = W_BOW;
 			unit->weapon_hiding = W_NONE;
-			unit->mesh_inst->frame_end_info = false;
 			break;
 		default:
 			assert(0);
@@ -844,7 +837,7 @@ void CreateCharacterPanel::UpdateUnit(float dt)
 	switch(anim)
 	{
 	case DA_ATTACK:
-		if(unit->mesh_inst->frame_end_info)
+		if(unit->mesh_inst->IsEnded())
 		{
 			unit->mesh_inst->groups[0].speed = 1.f;
 			if(Rand() % 2 == 0)
@@ -858,9 +851,9 @@ void CreateCharacterPanel::UpdateUnit(float dt)
 		break;
 	case DA_HIDE_WEAPON:
 	case DA_HIDE_BOW:
-		if(unit->animation_state == 0 && (unit->mesh_inst->GetProgress() <= unit->data->frames->t[F_TAKE_WEAPON] || unit->mesh_inst->frame_end_info))
+		if(unit->animation_state == 0 && (unit->mesh_inst->GetProgress() <= unit->data->frames->t[F_TAKE_WEAPON]))
 			unit->animation_state = 1;
-		if(unit->mesh_inst->frame_end_info)
+		if(unit->mesh_inst->IsEnded())
 		{
 			unit->weapon_state = WS_HIDDEN;
 			unit->weapon_hiding = W_NONE;
@@ -874,7 +867,7 @@ void CreateCharacterPanel::UpdateUnit(float dt)
 		else if(unit->mesh_inst->GetProgress() > 35.f / 40)
 		{
 			unit->animation_state = 3;
-			if(unit->mesh_inst->frame_end_info)
+			if(unit->mesh_inst->IsEnded())
 			{
 				game_level->FreeBowInstance(unit->bow_instance);
 				unit->mesh_inst->groups[0].speed = 1.f;
@@ -893,25 +886,25 @@ void CreateCharacterPanel::UpdateUnit(float dt)
 		unit->bow_instance->need_update = true;
 		break;
 	case DA_SHOW_WEAPON:
-		if(unit->animation_state == 0 && (unit->mesh_inst->GetProgress() >= unit->data->frames->t[F_TAKE_WEAPON] || unit->mesh_inst->frame_end_info))
+		if(unit->animation_state == 0 && (unit->mesh_inst->GetProgress() >= unit->data->frames->t[F_TAKE_WEAPON]))
 			unit->animation_state = 1;
-		if(unit->mesh_inst->frame_end_info)
+		if(unit->mesh_inst->IsEnded())
 		{
 			unit->weapon_state = WS_TAKEN;
 			anim = DA_ATTACK;
 		}
 		break;
 	case DA_SHOW_BOW:
-		if(unit->animation_state == 0 && (unit->mesh_inst->GetProgress() >= unit->data->frames->t[F_TAKE_WEAPON] || unit->mesh_inst->frame_end_info))
+		if(unit->animation_state == 0 && (unit->mesh_inst->GetProgress() >= unit->data->frames->t[F_TAKE_WEAPON]))
 			unit->animation_state = 1;
-		if(unit->mesh_inst->frame_end_info)
+		if(unit->mesh_inst->IsEnded())
 		{
 			unit->weapon_state = WS_TAKEN;
 			anim = DA_SHOOT;
 		}
 		break;
 	case DA_LOOKS_AROUND:
-		if(unit->mesh_inst->frame_end_info)
+		if(unit->mesh_inst->IsEnded())
 			anim = DA_STAND;
 		break;
 	case DA_BLOCK:

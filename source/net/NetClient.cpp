@@ -739,7 +739,6 @@ bool Net::ProcessControlMessageClient(BitStreamReader& f, bool& exit_from_server
 						unit.animation_state = 0;
 						unit.mesh_inst->Play(NAMES::ani_bash, PLAY_ONCE | PLAY_PRIO1 | PLAY_RESTORE, group);
 						unit.mesh_inst->groups[1].speed = attack_speed;
-						unit.mesh_inst->frame_end_info2 = false;
 						unit.hitted = false;
 					}
 					break;
@@ -760,7 +759,6 @@ bool Net::ProcessControlMessageClient(BitStreamReader& f, bool& exit_from_server
 				case AID_StopBlock:
 					{
 						unit.action = A_NONE;
-						unit.mesh_inst->frame_end_info2 = false;
 						unit.mesh_inst->Deactivate(group);
 						unit.mesh_inst->groups[1].speed = 1.f;
 					}
@@ -979,7 +977,6 @@ bool Net::ProcessControlMessageClient(BitStreamReader& f, bool& exit_from_server
 						unit->action = A_ANIMATION;
 						unit->mesh_inst->Play("wyrzuca", PLAY_ONCE | PLAY_PRIO2, 0);
 						unit->mesh_inst->groups[0].speed = 1.f;
-						unit->mesh_inst->frame_end_info = false;
 					}
 				}
 			}
@@ -1022,7 +1019,6 @@ bool Net::ProcessControlMessageClient(BitStreamReader& f, bool& exit_from_server
 						unit->animation = ANI_PLAY;
 						unit->mesh_inst->Play(up_animation ? "podnosi_gora" : "podnosi", PLAY_ONCE | PLAY_PRIO2, 0);
 						unit->mesh_inst->groups[0].speed = 1.f;
-						unit->mesh_inst->frame_end_info = false;
 					}
 				}
 			}
@@ -1115,13 +1111,9 @@ bool Net::ProcessControlMessageClient(BitStreamReader& f, bool& exit_from_server
 							unit->animation_state = 1;
 
 						if(unit->mesh_inst->mesh->head.n_groups == 2)
-						{
-							unit->mesh_inst->frame_end_info2 = false;
 							unit->mesh_inst->Play(NAMES::ani_hurt, PLAY_PRIO1 | PLAY_ONCE, 1);
-						}
 						else
 						{
-							unit->mesh_inst->frame_end_info = false;
 							unit->mesh_inst->Play(NAMES::ani_hurt, PLAY_PRIO3 | PLAY_ONCE, 0);
 							unit->mesh_inst->groups[0].speed = 1.f;
 							unit->animation = ANI_PLAY;
@@ -1256,7 +1248,6 @@ bool Net::ProcessControlMessageClient(BitStreamReader& f, bool& exit_from_server
 					{
 						unit->mesh_inst->Play(unit->data->idles->anims[animation_index].c_str(), PLAY_ONCE, 0);
 						unit->mesh_inst->groups[0].speed = 1.f;
-						unit->mesh_inst->frame_end_info = false;
 						unit->animation = ANI_IDLE;
 					}
 				}
@@ -2028,19 +2019,16 @@ bool Net::ProcessControlMessageClient(BitStreamReader& f, bool& exit_from_server
 							{
 								door->state = Door::Closing;
 								door->mesh_inst->Play(&door->mesh_inst->mesh->anims[0], PLAY_ONCE | PLAY_STOP_AT_END | PLAY_NO_BLEND | PLAY_BACK, 0);
-								door->mesh_inst->frame_end_info = false;
 							}
 							else if(door->state == Door::Opening)
 							{
 								door->state = Door::Closing2;
 								door->mesh_inst->Play(&door->mesh_inst->mesh->anims[0], PLAY_ONCE | PLAY_STOP_AT_END | PLAY_BACK, 0);
-								door->mesh_inst->frame_end_info = false;
 							}
 							else if(door->state == Door::Opening2)
 							{
 								door->state = Door::Closing;
 								door->mesh_inst->Play(&door->mesh_inst->mesh->anims[0], PLAY_ONCE | PLAY_STOP_AT_END | PLAY_BACK, 0);
-								door->mesh_inst->frame_end_info = false;
 							}
 							else
 								ok = false;
@@ -2053,21 +2041,18 @@ bool Net::ProcessControlMessageClient(BitStreamReader& f, bool& exit_from_server
 								door->locked = LOCK_NONE;
 								door->state = Door::Opening;
 								door->mesh_inst->Play(&door->mesh_inst->mesh->anims[0], PLAY_ONCE | PLAY_STOP_AT_END | PLAY_NO_BLEND, 0);
-								door->mesh_inst->frame_end_info = false;
 							}
 							else if(door->state == Door::Closing)
 							{
 								door->locked = LOCK_NONE;
 								door->state = Door::Opening2;
 								door->mesh_inst->Play(&door->mesh_inst->mesh->anims[0], PLAY_ONCE | PLAY_STOP_AT_END, 0);
-								door->mesh_inst->frame_end_info = false;
 							}
 							else if(door->state == Door::Closing2)
 							{
 								door->locked = LOCK_NONE;
 								door->state = Door::Opening;
 								door->mesh_inst->Play(&door->mesh_inst->mesh->anims[0], PLAY_ONCE | PLAY_STOP_AT_END, 0);
-								door->mesh_inst->frame_end_info = false;
 							}
 							else
 								ok = false;
@@ -2365,13 +2350,9 @@ bool Net::ProcessControlMessageClient(BitStreamReader& f, bool& exit_from_server
 						unit->animation_state = 0;
 
 						if(unit->mesh_inst->mesh->head.n_groups == 2)
-						{
-							unit->mesh_inst->frame_end_info2 = false;
 							unit->mesh_inst->Play("cast", PLAY_ONCE | PLAY_PRIO1, 1);
-						}
 						else
 						{
-							unit->mesh_inst->frame_end_info = false;
 							unit->animation = ANI_PLAY;
 							unit->mesh_inst->Play("cast", PLAY_ONCE | PLAY_PRIO1, 0);
 							unit->mesh_inst->groups[0].speed = 1.f;
@@ -2959,7 +2940,6 @@ bool Net::ProcessControlMessageClient(BitStreamReader& f, bool& exit_from_server
 					else
 					{
 						unit->action = A_USE_ITEM;
-						unit->mesh_inst->frame_end_info2 = false;
 						unit->mesh_inst->Play("cast", PLAY_ONCE | PLAY_PRIO1, 1);
 					}
 				}

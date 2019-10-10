@@ -216,7 +216,6 @@ void Game::UpdateAi(float dt)
 			if(u.action == A_BLOCK)
 			{
 				u.action = A_NONE;
-				u.mesh_inst->frame_end_info2 = false;
 				u.mesh_inst->Deactivate(1);
 				if(Net::IsOnline())
 				{
@@ -424,7 +423,6 @@ void Game::UpdateAi(float dt)
 					if(u.action == A_BLOCK)
 					{
 						u.action = A_NONE;
-						u.mesh_inst->frame_end_info2 = false;
 						u.mesh_inst->Deactivate(1);
 						if(Net::IsOnline())
 						{
@@ -1056,7 +1054,7 @@ void Game::UpdateAi(float dt)
 										break;
 									}
 								}
-								// nothing to use, play animation
+							// nothing to use, play animation
 							case AI_ANIMATION:
 								{
 									int id = Rand() % u.data->idles->anims.size();
@@ -1064,7 +1062,6 @@ void Game::UpdateAi(float dt)
 									ai.idle_action = AIController::Idle_Animation;
 									u.mesh_inst->Play(u.data->idles->anims[id].c_str(), PLAY_ONCE, 0);
 									u.mesh_inst->groups[0].speed = 1.f;
-									u.mesh_inst->frame_end_info = false;
 									u.animation = ANI_IDLE;
 									if(Net::IsOnline())
 									{
@@ -1684,16 +1681,12 @@ void Game::UpdateAi(float dt)
 										u.action_unit = nullptr;
 
 										if(u.mesh_inst->mesh->head.n_groups == 2)
-										{
-											u.mesh_inst->frame_end_info2 = false;
 											u.mesh_inst->Play("cast", PLAY_ONCE | PLAY_PRIO1, 1);
-										}
 										else
 										{
-											u.mesh_inst->frame_end_info = false;
-											u.animation = ANI_PLAY;
 											u.mesh_inst->Play("cast", PLAY_ONCE | PLAY_PRIO1, 0);
 											u.mesh_inst->groups[0].speed = 1.f;
+											u.animation = ANI_PLAY;
 										}
 
 										if(Net::IsOnline())
@@ -2243,7 +2236,6 @@ void Game::UpdateAi(float dt)
 								u.animation_state = 0;
 								u.mesh_inst->Play(NAMES::ani_bash, PLAY_ONCE | PLAY_PRIO1 | PLAY_RESTORE, 1);
 								u.mesh_inst->groups[1].speed = speed;
-								u.mesh_inst->frame_end_info2 = false;
 								u.hitted = false;
 								u.RemoveStamina(Unit::STAMINA_BASH_ATTACK);
 
@@ -2265,7 +2257,6 @@ void Game::UpdateAi(float dt)
 					{
 						// no hits to block or time expiration
 						u.action = A_NONE;
-						u.mesh_inst->frame_end_info2 = false;
 						u.mesh_inst->Deactivate(1);
 						ai.state = AIController::Fighting;
 						ai.timer = 0.f;
@@ -2383,16 +2374,12 @@ void Game::UpdateAi(float dt)
 							u.target_pos = target_pos;
 
 						if(u.mesh_inst->mesh->head.n_groups == 2)
-						{
-							u.mesh_inst->frame_end_info2 = false;
 							u.mesh_inst->Play("cast", PLAY_ONCE | PLAY_PRIO1, 1);
-						}
 						else
 						{
-							u.mesh_inst->frame_end_info = false;
-							u.animation = ANI_PLAY;
 							u.mesh_inst->Play("cast", PLAY_ONCE | PLAY_PRIO1, 0);
 							u.mesh_inst->groups[0].speed = 1.f;
+							u.animation = ANI_PLAY;
 						}
 
 						if(Net::IsOnline())
@@ -2623,7 +2610,6 @@ void Game::UpdateAi(float dt)
 								game_level->minimap_opened_doors = true;
 							door.state = Door::Opening;
 							door.mesh_inst->Play(&door.mesh_inst->mesh->anims[0], PLAY_ONCE | PLAY_STOP_AT_END | PLAY_NO_BLEND, 0);
-							door.mesh_inst->frame_end_info = false;
 
 							// play sound
 							if(Rand() % 2 == 0)
