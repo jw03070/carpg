@@ -12,7 +12,9 @@ public:
 	void GenerateItemIcon(Item& item);
 	void DrawItemIcon(const Item& item, RenderTarget* target, float rot);
 
+	MeshPtr aBox, aCylinder, aSphere, aCapsule;
 	MeshPtr aHuman, aHair[5], aBeard[5], aMustache[2], aEyebrows;
+	MeshPtr aArrow, aSkybox, aBag, aChest, aGrating, aDoorWall, aDoorWall2, aStairsDown, aStairsDown2, aStairsUp, aSpellball, aPressurePlate, aDoor, aDoor2, aStun;
 
 private:
 	void CreateMissingTexture();

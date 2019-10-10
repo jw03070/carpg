@@ -498,8 +498,6 @@ public:
 	//-----------------------------------------------------------------
 	// RESOURCES
 	//-----------------------------------------------------------------
-	MeshPtr aBox, aCylinder, aSphere, aCapsule;
-	MeshPtr aArrow, aSkybox, aBag, aChest, aGrating, aDoorWall, aDoorWall2, aStairsDown, aStairsDown2, aStairsUp, aSpellball, aPressurePlate, aDoor, aDoor2, aStun;
 	VertexDataPtr vdStairsUp, vdStairsDown, vdDoorHole;
 	RenderTarget* rt_save, *rt_item_rot;
 	Texture tMinimap;

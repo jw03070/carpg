@@ -40,6 +40,7 @@
 #include "GameStats.h"
 #include "Arena.h"
 #include "CommandParser.h"
+#include "GameResources.h"
 
 //=================================================================================================
 void Net::InitClient()
@@ -1149,7 +1150,7 @@ bool Net::ProcessControlMessageClient(BitStreamReader& f, bool& exit_from_server
 					LevelArea& area = game_level->GetArea(pos);
 
 					Bullet& b = Add1(area.tmp->bullets);
-					b.mesh = game->aArrow;
+					b.mesh = game_res->aArrow;
 					b.pos = pos;
 					b.start_pos = pos;
 					b.rot = Vec3(rotX, rotY, 0);

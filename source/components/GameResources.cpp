@@ -52,6 +52,10 @@ void GameResources::CreateMissingTexture()
 void GameResources::LoadData()
 {
 	res_mgr->Load(aHuman);
+	aBox = res_mgr->Load<Mesh>("box.qmsh");
+	aCylinder = res_mgr->Load<Mesh>("cylinder.qmsh");
+	aSphere = res_mgr->Load<Mesh>("sphere.qmsh");
+	aCapsule = res_mgr->Load<Mesh>("capsule.qmsh");
 	aHair[0] = res_mgr->Load<Mesh>("hair1.qmsh");
 	aHair[1] = res_mgr->Load<Mesh>("hair2.qmsh");
 	aHair[2] = res_mgr->Load<Mesh>("hair3.qmsh");
@@ -65,6 +69,20 @@ void GameResources::LoadData()
 	aBeard[2] = res_mgr->Load<Mesh>("beard3.qmsh");
 	aBeard[3] = res_mgr->Load<Mesh>("beard4.qmsh");
 	aBeard[4] = res_mgr->Load<Mesh>("beardm1.qmsh");
+	aArrow = res_mgr->Load<Mesh>("strzala.qmsh");
+	aSkybox = res_mgr->Load<Mesh>("skybox.qmsh");
+	aBag = res_mgr->Load<Mesh>("worek.qmsh");
+	aChest = res_mgr->Load<Mesh>("skrzynia.qmsh");
+	aGrating = res_mgr->Load<Mesh>("kratka.qmsh");
+	aDoorWall = res_mgr->Load<Mesh>("nadrzwi.qmsh");
+	aDoorWall2 = res_mgr->Load<Mesh>("nadrzwi2.qmsh");
+	aStairsDown = res_mgr->Load<Mesh>("schody_dol.qmsh");
+	aStairsDown2 = res_mgr->Load<Mesh>("schody_dol2.qmsh");
+	aStairsUp = res_mgr->Load<Mesh>("schody_gora.qmsh");
+	aSpellball = res_mgr->Load<Mesh>("spellball.qmsh");
+	aDoor = res_mgr->Load<Mesh>("drzwi.qmsh");
+	aDoor2 = res_mgr->Load<Mesh>("drzwi2.qmsh");
+	aStun = res_mgr->Load<Mesh>("stunned.qmsh");
 }
 
 //=================================================================================================

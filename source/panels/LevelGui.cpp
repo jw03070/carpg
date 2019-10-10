@@ -369,7 +369,7 @@ void LevelGui::DrawFront()
 			if(IsSet(item.item->flags, ITEM_GROUND_MESH))
 				mesh = item.item->mesh;
 			else
-				mesh = game->aBag;
+				mesh = game_res->aBag;
 			Vec3 text_pos = item.pos;
 			text_pos.y += mesh->head.bbox.v2.y;
 			cstring text;

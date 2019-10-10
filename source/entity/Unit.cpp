@@ -38,6 +38,7 @@
 #include "City.h"
 #include "InsideLocation.h"
 #include "Portal.h"
+#include "GameResources.h"
 
 const float Unit::AUTO_TALK_WAIT = 0.333f;
 const float Unit::STAMINA_BOW_ATTACK = 100.f;
@@ -7042,7 +7043,7 @@ void Unit::Update(float dt)
 				b.attack = CalculateAttack(&GetBow());
 				b.rot = Vec3(PI / 2, rot + PI, 0);
 				b.pos = Vec3::TransformZero(m2);
-				b.mesh = game->aArrow;
+				b.mesh = game_res->aArrow;
 				b.speed = GetArrowSpeed();
 				b.timer = ARROW_TIMER;
 				b.owner = this;

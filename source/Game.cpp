@@ -4575,7 +4575,7 @@ void Game::UpdateTraps(LevelArea& area, float dt)
 						b.level = 4;
 						b.backstab = 0.25f;
 						b.attack = float(trap.base->attack);
-						b.mesh = aArrow;
+						b.mesh = game_res->aArrow;
 						b.pos = Vec3(2.f*trap.tile.x + trap.pos.x - float(int(trap.pos.x / 2) * 2) + Random(-trap.base->rw, trap.base->rw) - 1.2f*DirToPos(trap.dir).x,
 							Random(0.5f, 1.5f),
 							2.f*trap.tile.y + trap.pos.z - float(int(trap.pos.z / 2) * 2) + Random(-trap.base->h, trap.base->h) - 1.2f*DirToPos(trap.dir).y);
@@ -5244,18 +5244,18 @@ void Game::SetDungeonParamsAndTextures(BaseLocation& base)
 void Game::SetDungeonParamsToMeshes()
 {
 	// tekstury schodów / pu³apek
-	ApplyTexturePackToSubmesh(aStairsDown->subs[0], tFloor[0]);
-	ApplyTexturePackToSubmesh(aStairsDown->subs[2], tWall[0]);
-	ApplyTexturePackToSubmesh(aStairsDown2->subs[0], tFloor[0]);
-	ApplyTexturePackToSubmesh(aStairsDown2->subs[2], tWall[0]);
-	ApplyTexturePackToSubmesh(aStairsUp->subs[0], tFloor[0]);
-	ApplyTexturePackToSubmesh(aStairsUp->subs[2], tWall[0]);
-	ApplyTexturePackToSubmesh(aDoorWall->subs[0], tWall[0]);
-	ApplyDungeonLightToMesh(*aStairsDown);
-	ApplyDungeonLightToMesh(*aStairsDown2);
-	ApplyDungeonLightToMesh(*aStairsUp);
-	ApplyDungeonLightToMesh(*aDoorWall);
-	ApplyDungeonLightToMesh(*aDoorWall2);
+	ApplyTexturePackToSubmesh(game_res->aStairsDown->subs[0], tFloor[0]);
+	ApplyTexturePackToSubmesh(game_res->aStairsDown->subs[2], tWall[0]);
+	ApplyTexturePackToSubmesh(game_res->aStairsDown2->subs[0], tFloor[0]);
+	ApplyTexturePackToSubmesh(game_res->aStairsDown2->subs[2], tWall[0]);
+	ApplyTexturePackToSubmesh(game_res->aStairsUp->subs[0], tFloor[0]);
+	ApplyTexturePackToSubmesh(game_res->aStairsUp->subs[2], tWall[0]);
+	ApplyTexturePackToSubmesh(game_res->aDoorWall->subs[0], tWall[0]);
+	ApplyDungeonLightToMesh(*game_res->aStairsDown);
+	ApplyDungeonLightToMesh(*game_res->aStairsDown2);
+	ApplyDungeonLightToMesh(*game_res->aStairsUp);
+	ApplyDungeonLightToMesh(*game_res->aDoorWall);
+	ApplyDungeonLightToMesh(*game_res->aDoorWall2);
 
 	// apply texture/lighting to trap to make it same texture as dungeon
 	if(BaseTrap::traps[TRAP_ARROW].mesh->state == ResourceState::Loaded)
@@ -5270,7 +5270,7 @@ void Game::SetDungeonParamsToMeshes()
 	}
 
 	// druga tekstura
-	ApplyTexturePackToSubmesh(aDoorWall2->subs[0], tWall[1]);
+	ApplyTexturePackToSubmesh(game_res->aDoorWall2->subs[0], tWall[1]);
 }
 
 void Game::EnterLevel(LocationGenerator* loc_gen)
