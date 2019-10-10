@@ -908,7 +908,7 @@ void CreateCharacterPanel::UpdateUnit(float dt)
 //=================================================================================================
 void CreateCharacterPanel::Init()
 {
-	unit->mesh_inst = new MeshInstance(game_res->mesh_human);
+	unit->mesh_inst = new MeshInstance(game_res->aHuman);
 
 	for(Class* clas : Class::classes)
 	{
@@ -929,7 +929,7 @@ void CreateCharacterPanel::RandomAppearance()
 	hair_color_index = Rand() % n_hair_colors;
 	u.human_data->hair_color = g_hair_colors[hair_color_index];
 	u.human_data->height = Random(0.95f, 1.05f);
-	u.human_data->ApplyScale(game_res->mesh_human);
+	u.human_data->ApplyScale(game_res->aHuman);
 	SetControls();
 }
 

@@ -17,6 +17,7 @@
 #include "ResourceManager.h"
 #include "SoundManager.h"
 #include "PhysicCallbacks.h"
+#include "GameResources.h"
 #include "DirectX.h"
 
 //-----------------------------------------------------------------------------
@@ -1373,7 +1374,7 @@ void Game::ListDrawObjectsUnit(FrustumPlanes& frustum, bool outside, Unit& u)
 		// brwi
 		SceneNode* node2 = node_pool.Get();
 		node2->billboard = false;
-		node2->mesh = aEyebrows;
+		node2->mesh = game_res->aEyebrows;
 		node2->parent_mesh_inst = node->mesh_inst;
 		node2->flags = SceneNode::F_ANIMATED;
 		node2->mat = node->mat;
@@ -1404,7 +1405,7 @@ void Game::ListDrawObjectsUnit(FrustumPlanes& frustum, bool outside, Unit& u)
 		{
 			SceneNode* node3 = node_pool.Get();
 			node3->billboard = false;
-			node3->mesh = aHair[h.hair];
+			node3->mesh = game_res->aHair[h.hair];
 			node3->parent_mesh_inst = node->mesh_inst;
 			node3->flags = SceneNode::F_ANIMATED;
 			node3->mat = node->mat;
@@ -1436,7 +1437,7 @@ void Game::ListDrawObjectsUnit(FrustumPlanes& frustum, bool outside, Unit& u)
 		{
 			SceneNode* node3 = node_pool.Get();
 			node3->billboard = false;
-			node3->mesh = aBeard[h.beard];
+			node3->mesh = game_res->aBeard[h.beard];
 			node3->parent_mesh_inst = node->mesh_inst;
 			node3->flags = SceneNode::F_ANIMATED;
 			node3->mat = node->mat;
@@ -1468,7 +1469,7 @@ void Game::ListDrawObjectsUnit(FrustumPlanes& frustum, bool outside, Unit& u)
 		{
 			SceneNode* node3 = node_pool.Get();
 			node3->billboard = false;
-			node3->mesh = aMustache[h.mustache];
+			node3->mesh = game_res->aMustache[h.mustache];
 			node3->parent_mesh_inst = node->mesh_inst;
 			node3->flags = SceneNode::F_ANIMATED;
 			node3->mat = node->mat;

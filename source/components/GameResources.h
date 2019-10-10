@@ -12,7 +12,7 @@ public:
 	void GenerateItemIcon(Item& item);
 	void DrawItemIcon(const Item& item, RenderTarget* target, float rot);
 
-	Mesh* mesh_human;
+	MeshPtr aHuman, aHair[5], aBeard[5], aMustache[2], aEyebrows;
 
 private:
 	void CreateMissingTexture();

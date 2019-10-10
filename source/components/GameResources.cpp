@@ -23,7 +23,7 @@ GameResources::~GameResources()
 //=================================================================================================
 void GameResources::Init()
 {
-	mesh_human = res_mgr->Load<Mesh>("human.qmsh");
+	aHuman = res_mgr->Load<Mesh>("human.qmsh");
 	rt_item = render->CreateRenderTarget(Int2(ITEM_IMAGE_SIZE, ITEM_IMAGE_SIZE));
 	CreateMissingTexture();
 }
@@ -51,7 +51,20 @@ void GameResources::CreateMissingTexture()
 //=================================================================================================
 void GameResources::LoadData()
 {
-	res_mgr->Load(mesh_human);
+	res_mgr->Load(aHuman);
+	aHair[0] = res_mgr->Load<Mesh>("hair1.qmsh");
+	aHair[1] = res_mgr->Load<Mesh>("hair2.qmsh");
+	aHair[2] = res_mgr->Load<Mesh>("hair3.qmsh");
+	aHair[3] = res_mgr->Load<Mesh>("hair4.qmsh");
+	aHair[4] = res_mgr->Load<Mesh>("hair5.qmsh");
+	aEyebrows = res_mgr->Load<Mesh>("eyebrows.qmsh");
+	aMustache[0] = res_mgr->Load<Mesh>("mustache1.qmsh");
+	aMustache[1] = res_mgr->Load<Mesh>("mustache2.qmsh");
+	aBeard[0] = res_mgr->Load<Mesh>("beard1.qmsh");
+	aBeard[1] = res_mgr->Load<Mesh>("beard2.qmsh");
+	aBeard[2] = res_mgr->Load<Mesh>("beard3.qmsh");
+	aBeard[3] = res_mgr->Load<Mesh>("beard4.qmsh");
+	aBeard[4] = res_mgr->Load<Mesh>("beardm1.qmsh");
 }
 
 //=================================================================================================
@@ -139,7 +152,7 @@ void GameResources::DrawItemIcon(const Item& item, RenderTarget* target, float r
 	const TexOverride* tex_override = nullptr;
 	if(item.type == IT_ARMOR)
 	{
-		if(const Armor & armor = item.ToArmor(); !armor.tex_override.empty())
+		if(const Armor& armor = item.ToArmor(); !armor.tex_override.empty())
 		{
 			tex_override = armor.GetTextureOverride();
 			assert(armor.tex_override.size() == mesh.head.n_subs);

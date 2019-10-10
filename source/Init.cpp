@@ -503,15 +503,11 @@ void Game::AddLoadTasks()
 {
 	game_gui->load_screen->Tick(txPreloadAssets);
 
-	game_res->LoadData();
-
 	bool nomusic = sound_mgr->IsMusicDisabled();
 
 	// gui textures
 	res_mgr->AddTaskCategory(txLoadGuiTextures);
-	tEquipped = res_mgr->Load<Texture>("equipped.png");
 	tBlack = res_mgr->Load<Texture>("czern.bmp");
-	tRip = res_mgr->Load<Texture>("rip.jpg");
 	tPortal = res_mgr->Load<Texture>("dark_portal.png");
 	tWarning = res_mgr->Load<Texture>("warning.png");
 	tError = res_mgr->Load<Texture>("error.png");
@@ -561,6 +557,7 @@ void Game::AddLoadTasks()
 
 	// models
 	res_mgr->AddTaskCategory(txLoadModels);
+	game_res->LoadData();
 	aBox = res_mgr->Load<Mesh>("box.qmsh");
 	aCylinder = res_mgr->Load<Mesh>("cylinder.qmsh");
 	aSphere = res_mgr->Load<Mesh>("sphere.qmsh");
@@ -578,19 +575,6 @@ void Game::AddLoadTasks()
 	aSpellball = res_mgr->Load<Mesh>("spellball.qmsh");
 	aDoor = res_mgr->Load<Mesh>("drzwi.qmsh");
 	aDoor2 = res_mgr->Load<Mesh>("drzwi2.qmsh");
-	aHair[0] = res_mgr->Load<Mesh>("hair1.qmsh");
-	aHair[1] = res_mgr->Load<Mesh>("hair2.qmsh");
-	aHair[2] = res_mgr->Load<Mesh>("hair3.qmsh");
-	aHair[3] = res_mgr->Load<Mesh>("hair4.qmsh");
-	aHair[4] = res_mgr->Load<Mesh>("hair5.qmsh");
-	aEyebrows = res_mgr->Load<Mesh>("eyebrows.qmsh");
-	aMustache[0] = res_mgr->Load<Mesh>("mustache1.qmsh");
-	aMustache[1] = res_mgr->Load<Mesh>("mustache2.qmsh");
-	aBeard[0] = res_mgr->Load<Mesh>("beard1.qmsh");
-	aBeard[1] = res_mgr->Load<Mesh>("beard2.qmsh");
-	aBeard[2] = res_mgr->Load<Mesh>("beard3.qmsh");
-	aBeard[3] = res_mgr->Load<Mesh>("beard4.qmsh");
-	aBeard[4] = res_mgr->Load<Mesh>("beardm1.qmsh");
 	aStun = res_mgr->Load<Mesh>("stunned.qmsh");
 
 	// preload buildings
