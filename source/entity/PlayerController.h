@@ -159,7 +159,7 @@ struct LocalPlayerData
 	GroundItem* picking_item;
 	Vec3 action_point;
 	int picking_item_state;
-	float rot_buf, action_rot;
+	float rot_buf, action_rot, grayout;
 	Key wasted_key;
 	bool autowalk, action_ready, action_ok;
 
@@ -175,6 +175,7 @@ struct LocalPlayerData
 		wasted_key = Key::None;
 		autowalk = false;
 		action_ready = false;
+		grayout = 0;
 	}
 	Unit* GetTargetUnit()
 	{

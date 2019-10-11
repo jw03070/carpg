@@ -85,6 +85,7 @@
 #include "GameGui.h"
 #include "CreateServerPanel.h"
 #include "PickServerPanel.h"
+#include "PostFxShader.h"
 
 const float LIMIT_DT = 0.3f;
 Game* global::game;
@@ -422,10 +423,11 @@ void Game::PostconfigureGame()
 	ItemScript::Init();
 
 	// shaders
-	debug_drawer = new DebugDrawer(render);
-	grass_shader = new GrassShader(render);
-	super_shader = new SuperShader(render);
-	terrain_shader = new TerrainShader(render);
+	render->RegisterShader(debug_drawer = new DebugDrawer);
+	render->RegisterShader(grass_shader = new GrassShader);
+	render->RegisterShader(postfx_shader = new PostFxShader);
+	render->RegisterShader(super_shader = new SuperShader);
+	render->RegisterShader(terrain_shader = new TerrainShader);
 	debug_drawer->SetHandler(delegate<void(DebugDrawer*)>(this, &Game::OnDebugDraw));
 
 	// test & validate game data (in debug always check some things)
@@ -659,7 +661,9 @@ void Game::DrawGame(RenderTarget* target)
 {
 	IDirect3DDevice9* device = render->GetDevice();
 
-	if(post_effects.empty() || !ePostFx)
+	PreparePostEffects();
+
+	if(post_effects.empty())
 	{
 		if(target)
 			render->SetTarget(target);
@@ -692,14 +696,8 @@ void Game::DrawGame(RenderTarget* target)
 	}
 	else
 	{
-		// render scene to texture
-		SURFACE sPost;
-		if(!render->IsMultisamplingEnabled())
-			V(tPostEffect[2]->GetSurfaceLevel(0, &sPost));
-		else
-			sPost = sPostEffect[2];
+		postfx_shader->Prepare();
 
-		V(device->SetRenderTarget(0, sPost));
 		V(device->Clear(0, nullptr, D3DCLEAR_ZBUFFER | D3DCLEAR_TARGET | D3DCLEAR_STENCIL, clear_color, 1.f, 0));
 
 		if(game_state == GS_LEVEL)
@@ -714,93 +712,7 @@ void Game::DrawGame(RenderTarget* target)
 			debug_drawer->Draw();
 		}
 
-		PROFILER_BLOCK("PostEffects");
-
-		TEX t;
-		if(!render->IsMultisamplingEnabled())
-		{
-			sPost->Release();
-			t = tPostEffect[2];
-		}
-		else
-		{
-			SURFACE surf2;
-			V(tPostEffect[0]->GetSurfaceLevel(0, &surf2));
-			V(device->StretchRect(sPost, nullptr, surf2, nullptr, D3DTEXF_NONE));
-			surf2->Release();
-			t = tPostEffect[0];
-		}
-
-		// post effects
-		V(device->SetVertexDeclaration(render->GetVertexDeclaration(VDI_TEX)));
-		V(device->SetStreamSource(0, vbFullscreen, 0, sizeof(VTex)));
-		render->SetAlphaTest(false);
-		render->SetAlphaBlend(false);
-		render->SetNoCulling(false);
-		render->SetNoZWrite(true);
-
-		uint passes;
-		int index_surf = 1;
-		for(vector<PostEffect>::iterator it = post_effects.begin(), end = post_effects.end(); it != end; ++it)
-		{
-			SURFACE surf;
-			if(it + 1 == end)
-			{
-				// last pass
-				if(target)
-					surf = target->GetSurface();
-				else
-					V(device->GetBackBuffer(0, 0, D3DBACKBUFFER_TYPE_MONO, &surf));
-			}
-			else
-			{
-				// using next pass
-				if(!render->IsMultisamplingEnabled())
-					V(tPostEffect[index_surf]->GetSurfaceLevel(0, &surf));
-				else
-					surf = sPostEffect[index_surf];
-			}
-
-			V(device->SetRenderTarget(0, surf));
-			V(device->BeginScene());
-
-			V(ePostFx->SetTechnique(it->tech));
-			V(ePostFx->SetTexture(hPostTex, t));
-			V(ePostFx->SetFloat(hPostPower, it->power));
-			V(ePostFx->SetVector(hPostSkill, (D3DXVECTOR4*)&it->skill));
-
-			V(ePostFx->Begin(&passes, 0));
-			V(ePostFx->BeginPass(0));
-			V(device->DrawPrimitive(D3DPT_TRIANGLELIST, 0, 2));
-			V(ePostFx->EndPass());
-			V(ePostFx->End());
-
-			if(it + 1 == end)
-				game_gui->Draw(game_level->camera.matViewProj, IsSet(draw_flags, DF_GUI), IsSet(draw_flags, DF_MENU));
-
-			V(device->EndScene());
-
-			if(it + 1 == end)
-			{
-				if(!target)
-					surf->Release();
-			}
-			else if(!render->IsMultisamplingEnabled())
-			{
-				surf->Release();
-				t = tPostEffect[index_surf];
-			}
-			else
-			{
-				SURFACE surf2;
-				V(tPostEffect[0]->GetSurfaceLevel(0, &surf2));
-				V(device->StretchRect(surf, nullptr, surf2, nullptr, D3DTEXF_NONE));
-				surf2->Release();
-				t = tPostEffect[0];
-			}
-
-			index_surf = (index_surf + 1) % 3;
-		}
+		postfx_shader->Draw(post_effects);
 	}
 }
 
@@ -1147,8 +1059,6 @@ void Game::OnReload()
 		V(eSkybox->OnResetDevice());
 	if(eArea)
 		V(eArea->OnResetDevice());
-	if(ePostFx)
-		V(ePostFx->OnResetDevice());
 	if(eGlow)
 		V(eGlow->OnResetDevice());
 
@@ -1175,8 +1085,6 @@ void Game::OnReset()
 		V(eSkybox->OnLostDevice());
 	if(eArea)
 		V(eArea->OnLostDevice());
-	if(ePostFx)
-		V(ePostFx->OnLostDevice());
 	if(eGlow)
 		V(eGlow->OnLostDevice());
 
@@ -1330,7 +1238,6 @@ void Game::ClearPointers()
 	eParticle = nullptr;
 	eSkybox = nullptr;
 	eArea = nullptr;
-	ePostFx = nullptr;
 	eGlow = nullptr;
 
 	// bufory wierzcho³ków i indeksy
@@ -1674,22 +1581,18 @@ void Game::UpdateLights(vector<Light>& lights)
 }
 
 //=================================================================================================
-void Game::UpdatePostEffects(float dt)
+void Game::PreparePostEffects()
 {
 	post_effects.clear();
-	if(!cl_postfx || game_state != GS_LEVEL)
+	if(!cl_postfx || game_state != GS_LEVEL || !postfx_shader->effect)
 		return;
 
 	// szarzenie
-	if(pc->unit->IsAlive())
-		grayout = max(grayout - dt, 0.f);
-	else
-		grayout = min(grayout + dt, 1.f);
-	if(grayout > 0.f)
+	if(pc->data.grayout > 0.f)
 	{
 		PostEffect& e = Add1(post_effects);
-		e.tech = ePostFx->GetTechniqueByName("Monochrome");
-		e.power = grayout;
+		e.tech = postfx_shader->effect->GetTechniqueByName("Monochrome");
+		e.power = pc->data.grayout;
 	}
 
 	// upicie
@@ -1702,8 +1605,8 @@ void Game::UpdatePostEffects(float dt)
 		e2 = &*(post_effects.end() - 1);
 
 		e->id = e2->id = 0;
-		e->tech = ePostFx->GetTechniqueByName("BlurX");
-		e2->tech = ePostFx->GetTechniqueByName("BlurY");
+		e->tech = postfx_shader->effect->GetTechniqueByName("BlurX");
+		e2->tech = postfx_shader->effect->GetTechniqueByName("BlurY");
 		// 0.1-0.5 - 1
 		// 1 - 2
 		float mod;
@@ -1731,7 +1634,6 @@ void Game::ReloadShaders()
 		eParticle = render->CompileShader("particle.fx");
 		eSkybox = render->CompileShader("skybox.fx");
 		eArea = render->CompileShader("area.fx");
-		ePostFx = render->CompileShader("post.fx");
 		eGlow = render->CompileShader("glow.fx");
 
 		for(ShaderHandler* shader : render->GetShaders())
@@ -1753,7 +1655,6 @@ void Game::ReleaseShaders()
 	SafeRelease(eParticle);
 	SafeRelease(eSkybox);
 	SafeRelease(eArea);
-	SafeRelease(ePostFx);
 	SafeRelease(eGlow);
 
 	for(ShaderHandler* shader : render->GetShaders())
@@ -2545,7 +2446,6 @@ void Game::LoadShaders()
 	eParticle = render->CompileShader("particle.fx");
 	eSkybox = render->CompileShader("skybox.fx");
 	eArea = render->CompileShader("area.fx");
-	ePostFx = render->CompileShader("post.fx");
 	eGlow = render->CompileShader("glow.fx");
 
 	SetupShaders();
@@ -2594,11 +2494,6 @@ void Game::SetupShaders()
 	hAreaPlayerPos = eArea->GetParameterByName(nullptr, "playerPos");
 	hAreaRange = eArea->GetParameterByName(nullptr, "range");
 	assert(hAreaCombined && hAreaColor && hAreaPlayerPos && hAreaRange);
-
-	hPostTex = ePostFx->GetParameterByName(nullptr, "t0");
-	hPostPower = ePostFx->GetParameterByName(nullptr, "power");
-	hPostSkill = ePostFx->GetParameterByName(nullptr, "skill");
-	assert(hPostTex && hPostPower && hPostSkill);
 
 	hGlowCombined = eGlow->GetParameterByName(nullptr, "matCombined");
 	hGlowBones = eGlow->GetParameterByName(nullptr, "matBones");

@@ -14,6 +14,7 @@
 #include "ParticleSystem.h"
 #include "Render.h"
 #include "TerrainShader.h"
+#include "PostFxShader.h"
 #include "ResourceManager.h"
 #include "SoundManager.h"
 #include "PhysicCallbacks.h"
@@ -3089,15 +3090,16 @@ void Game::DrawGlowingNodes(bool use_postfx)
 	V(device->Clear(0, nullptr, D3DCLEAR_TARGET, 0, 0, 0));
 
 	// ustawienia shadera
+	ID3DXEffect* ePostFx = postfx_shader->effect;
 	D3DXHANDLE tech = ePostFx->GetTechniqueByName("BlurX");
 	V(ePostFx->SetTechnique(tech));
-	V(ePostFx->SetTexture(hPostTex, tex));
+	V(ePostFx->SetTexture(postfx_shader->hPostTex, tex));
 	// chcê ¿eby rozmiar efektu by³ % taki sam w ka¿dej rozdzielczoœci (ju¿ tak nie jest)
 	const float base_range = 2.5f;
 	const float range_x = (base_range / 1024.f);// *(wnd_size.x/1024.f);
 	const float range_y = (base_range / 768.f);// *(wnd_size.x/768.f);
-	V(ePostFx->SetVector(hPostSkill, (D3DXVECTOR4*)&Vec4(range_x, range_y, 0, 0)));
-	V(ePostFx->SetFloat(hPostPower, 1));
+	V(ePostFx->SetVector(postfx_shader->hPostSkill, (D3DXVECTOR4*)&Vec4(range_x, range_y, 0, 0)));
+	V(ePostFx->SetFloat(postfx_shader->hPostPower, 1));
 
 	// ustawienia modelu
 	V(device->SetVertexDeclaration(render->GetVertexDeclaration(VDI_TEX)));
@@ -3134,7 +3136,7 @@ void Game::DrawGlowingNodes(bool use_postfx)
 	// ustawienia shadera
 	tech = ePostFx->GetTechniqueByName("BlurY");
 	V(ePostFx->SetTechnique(tech));
-	V(ePostFx->SetTexture(hPostTex, tex));
+	V(ePostFx->SetTexture(postfx_shader->hPostTex, tex));
 
 	// renderowanie
 	V(device->BeginScene());
@@ -3191,7 +3193,7 @@ void Game::DrawGlowingNodes(bool use_postfx)
 
 	// ustawienia shadera
 	tech = ePostFx->GetTechniqueByName("Empty");
-	V(ePostFx->SetTexture(hPostTex, tex));
+	V(ePostFx->SetTexture(postfx_shader->hPostTex, tex));
 
 	// renderowanie
 	V(device->BeginScene());

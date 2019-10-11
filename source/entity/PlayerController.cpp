@@ -2059,6 +2059,12 @@ void PlayerController::Update(float dt)
 	UpdateCooldown(dt);
 	ClearShortcuts();
 
+	// grayout screen when dead
+	if(unit->IsAlive())
+		data.grayout = max(data.grayout - dt, 0.f);
+	else
+		data.grayout = min(data.grayout + dt, 1.f);
+
 	// last damage
 	dmgc += last_dmg;
 	dmgc *= (1.f - dt * 2);

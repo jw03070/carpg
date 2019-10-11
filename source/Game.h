@@ -90,14 +90,6 @@ enum DRAW_FLAGS
 	DF_MENU = 1 << 15,
 };
 
-struct PostEffect
-{
-	int id;
-	D3DXHANDLE tech;
-	float power;
-	Vec4 skill;
-};
-
 enum class ProfilerMode
 {
 	Disabled,
@@ -128,12 +120,12 @@ public:
 	void ClearPointers();
 	void CreateTextures();
 	void CreateRenderTargets();
-	void PreloadData();
 	void ReportError(int id, cstring text, bool once = false);
 
 	// initialization & loading
 	void PreconfigureGame();
 	void PreloadLanguage();
+	void PreloadData();
 	void LoadSystem();
 	void AddFilesystem();
 	void LoadDatafiles();
@@ -306,7 +298,7 @@ public:
 	void OnEnterLevelOrLocation();
 	cstring GetRandomIdleText(Unit& u);
 	void UpdateLights(vector<Light>& lights);
-	void UpdatePostEffects(float dt);
+	void PreparePostEffects();
 	// --- cutscene
 	void CutsceneStart(bool instant);
 	void CutsceneImage(const string& image, float time);
@@ -362,6 +354,7 @@ public:
 	Arena* arena;
 	DebugDrawer* debug_drawer;
 	GrassShader* grass_shader;
+	PostFxShader* postfx_shader;
 	SuperShader* super_shader;
 	TerrainShader* terrain_shader;
 
@@ -439,11 +432,7 @@ public:
 	IB ibDungeon;
 	Int2 dungeon_part[16], dungeon_part2[16], dungeon_part3[16], dungeon_part4[16];
 	bool draw_particle_sphere, draw_unit_radius, draw_hitbox, draw_phy, draw_col, cl_postfx;
-	float portal_anim, drunk_anim, grayout;
-	// post effect u¿ywa 3 tekstur lub jeœli jest w³¹czony multisampling 3 surface i 1 tekstury
-	SURFACE sPostEffect[3];
-	TEX tPostEffect[3];
-	VB vbFullscreen;
+	float portal_anim, drunk_anim;
 	vector<PostEffect> post_effects;
 	// scene
 	VB vbParticle;
@@ -487,11 +476,11 @@ public:
 	//-----------------------------------------------------------------
 	RenderTarget* rt_save, *rt_item_rot;
 	Texture tMinimap;
-	ID3DXEffect* eMesh, *eParticle, *eSkybox, *eArea, *ePostFx, *eGlow;
+	ID3DXEffect* eMesh, *eParticle, *eSkybox, *eArea, *eGlow;
 	D3DXHANDLE techMesh, techMeshDir, techMeshSimple, techMeshSimple2, techMeshExplo, techParticle, techSkybox, techArea, techTrail, techGlowMesh, techGlowAni;
 	D3DXHANDLE hMeshCombined, hMeshWorld, hMeshTex, hMeshFogColor, hMeshFogParam, hMeshTint, hMeshAmbientColor, hMeshLightDir, hMeshLightColor, hMeshLights,
-		hParticleCombined, hParticleTex, hSkyboxCombined, hSkyboxTex, hAreaCombined, hAreaColor, hAreaPlayerPos, hAreaRange, hPostTex, hPostPower, hPostSkill,
-		hGlowCombined, hGlowBones, hGlowColor, hGlowTex;
+		hParticleCombined, hParticleTex, hSkyboxCombined, hSkyboxTex, hAreaCombined, hAreaColor, hAreaPlayerPos, hAreaRange, hGlowCombined, hGlowBones,
+		hGlowColor, hGlowTex;
 
 	//-----------------------------------------------------------------
 	// LOCALIZED TEXTS
