@@ -284,7 +284,7 @@ void Unit::SetGold(int new_gold)
 	{
 		game_gui->messages->AddFormattedMessage(player, GMS_GOLD_ADDED, -1, dif);
 		if(player->is_local)
-			sound_mgr->PlaySound2d(game->sCoins);
+			sound_mgr->PlaySound2d(game_res->sCoins);
 		else
 		{
 			NetChangePlayer& c = Add1(player->player_info->changes);
@@ -833,7 +833,7 @@ void Unit::AddItem2(const Item* item, uint count, uint team_count, bool show_msg
 {
 	assert(item && count && team_count <= count);
 
-	game->PreloadItem(item);
+	game_res->PreloadItem(item);
 
 	AddItem(item, count, team_count);
 
@@ -2715,7 +2715,7 @@ bool Unit::Read(BitStreamReader& f)
 				const Item* item = Item::TryGet(item_id);
 				if(item && ItemTypeToSlot(item->type) == (ITEM_SLOT)i)
 				{
-					game->PreloadItem(item);
+					game_res->PreloadItem(item);
 					slots[i] = item;
 				}
 				else
@@ -3155,7 +3155,7 @@ void Unit::ReequipItemsInternal()
 	if(data->type != UNIT_TYPE::ANIMAL && !HaveWeapon())
 	{
 		const Item* item = UnitHelper::GetBaseWeapon(*this);
-		game->PreloadItem(item);
+		game_res->PreloadItem(item);
 		AddItemAndEquipIfNone(item);
 	}
 }
@@ -5252,7 +5252,7 @@ void Unit::Die(Unit* killer)
 void Unit::DropGold(int count)
 {
 	gold -= count;
-	sound_mgr->PlaySound2d(game->sCoins);
+	sound_mgr->PlaySound2d(game_res->sCoins);
 
 	// animacja wyrzucania
 	action = A_ANIMATION;
@@ -5651,7 +5651,7 @@ void Unit::RefreshStock()
 		if(!game_level->entering)
 		{
 			for(ItemSlot& slot : stock->items)
-				game->PreloadItem(slot.item);
+				game_res->PreloadItem(slot.item);
 		}
 	}
 }
@@ -7160,7 +7160,7 @@ void Unit::Update(float dt)
 				area->tmp->tpes.push_back(tpe2);
 				b.trail2 = tpe2;
 
-				sound_mgr->PlaySound3d(game->sBow[Rand() % 2], b.pos, SHOOT_SOUND_DIST);
+				sound_mgr->PlaySound3d(game_res->sBow[Rand() % 2], b.pos, SHOOT_SOUND_DIST);
 
 				if(Net::IsOnline())
 				{
@@ -7296,7 +7296,7 @@ void Unit::Update(float dt)
 			float p = mesh_inst->GetProgress2();
 			if(p >= 28.f / 52.f && animation_state == 0)
 			{
-				PlaySound(game->sGulp, DRINK_SOUND_DIST);
+				PlaySound(game_res->sGulp, DRINK_SOUND_DIST);
 				animation_state = 1;
 				if(Net::IsLocal())
 					ApplyConsumableEffect(used_item->ToConsumable());
@@ -7325,7 +7325,7 @@ void Unit::Update(float dt)
 			if(p >= 32.f / 70 && animation_state == 0)
 			{
 				animation_state = 1;
-				PlaySound(game->sEat, EAT_SOUND_DIST);
+				PlaySound(game_res->sEat, EAT_SOUND_DIST);
 			}
 			if(p >= 48.f / 70 && animation_state == 1)
 			{
@@ -7817,7 +7817,7 @@ void Unit::Update(float dt)
 				RemoveItem(used_item, 1u);
 				used_item = nullptr;
 			}
-			sound_mgr->PlaySound3d(game->sZap, GetCenter(), MAGIC_SCROLL_SOUND_DIST);
+			sound_mgr->PlaySound3d(game_res->sZap, GetCenter(), MAGIC_SCROLL_SOUND_DIST);
 			action = A_NONE;
 			animation = ANI_STAND;
 			current_animation = (Animation)-1;

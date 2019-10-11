@@ -19,6 +19,7 @@
 #include "GameGui.h"
 #include "Quest_Scripted.h"
 #include "ScriptManager.h"
+#include "GameResources.h"
 
 const float JUMP_BACK_MIN_RANGE = 4.f;
 const float JUMP_BACK_TIMER = 0.2f;
@@ -2608,7 +2609,7 @@ void Game::UpdateAi(float dt)
 
 							// play sound
 							if(Rand() % 2 == 0)
-								sound_mgr->PlaySound3d(sDoor[Rand() % 3], door.GetCenter(), Door::SOUND_DIST);
+								sound_mgr->PlaySound3d(game_res->sDoor[Rand() % 3], door.GetCenter(), Door::SOUND_DIST);
 
 							if(Net::IsOnline())
 							{

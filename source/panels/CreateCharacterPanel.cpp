@@ -1528,7 +1528,7 @@ void CreateCharacterPanel::UpdateInventory()
 	for(int i = 0; i < SLOT_MAX; ++i)
 	{
 		if(items[i])
-			game->PreloadItem(items[i]);
+			game_res->PreloadItem(items[i]);
 		unit->slots[i] = items[i];
 	}
 

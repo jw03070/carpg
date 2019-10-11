@@ -760,7 +760,7 @@ void Level::SpawnObjectExtras(LevelArea& area, BaseObject* obj, const Vec3& pos,
 			pe->speed_min = Vec3(-1, 4, -1);
 			pe->speed_max = Vec3(1, 6, 1);
 			pe->mode = 0;
-			pe->tex = game->tBlood[BLOOD_RED];
+			pe->tex = game_res->tBlood[BLOOD_RED];
 			pe->size = 0.5f;
 			pe->Init();
 			area.tmp->pes.push_back(pe);
@@ -2645,7 +2645,7 @@ bool Level::CollideWithStairsRect(const CollisionObject& _co, const Box2d& _box)
 //=================================================================================================
 void Level::CreateBlood(LevelArea& area, const Unit& u, bool fully_created)
 {
-	if(!game->tBloodSplat[u.data->blood] || IsSet(u.data->flags2, F2_BLOODLESS))
+	if(!game_res->tBloodSplat[u.data->blood] || IsSet(u.data->flags2, F2_BLOODLESS))
 		return;
 
 	Blood& b = Add1(area.bloods);
@@ -4561,10 +4561,10 @@ void Level::SpawnUnitEffect(Unit& unit)
 {
 	Vec3 real_pos = unit.pos;
 	real_pos.y += 1.f;
-	sound_mgr->PlaySound3d(game->sSummon, real_pos, SPAWN_SOUND_DIST);
+	sound_mgr->PlaySound3d(game_res->sSummon, real_pos, SPAWN_SOUND_DIST);
 
 	ParticleEmitter* pe = new ParticleEmitter;
-	pe->tex = game->tSpawn;
+	pe->tex = game_res->tSpawn;
 	pe->emision_interval = 0.1f;
 	pe->life = 5.f;
 	pe->particle_life = 0.5f;

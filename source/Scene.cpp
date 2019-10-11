@@ -1783,7 +1783,7 @@ void Game::PrepareAreaPath()
 	if(!pc->CanUseAction())
 	{
 		pc->data.action_ready = false;
-		sound_mgr->PlaySound2d(sCancel);
+		sound_mgr->PlaySound2d(game_res->sCancel);
 		return;
 	}
 
@@ -2241,7 +2241,7 @@ void Game::FillDrawBatchDungeonParts(FrustumPlanes& frustum)
 					if(IsSet(tile.flags, Tile::F_FLOOR))
 					{
 						DungeonPart& dp = Add1(draw_batch.dungeon_parts);
-						dp.tp = &tFloor[tex_id];
+						dp.tex_o = &game_res->tFloor[tex_id];
 						dp.start_index = 0;
 						dp.primitive_count = 2;
 						dp.matrix = matrix_id;
@@ -2252,7 +2252,7 @@ void Game::FillDrawBatchDungeonParts(FrustumPlanes& frustum)
 					if(IsSet(tile.flags, Tile::F_CEILING | Tile::F_LOW_CEILING))
 					{
 						DungeonPart& dp = Add1(draw_batch.dungeon_parts);
-						dp.tp = &tCeil[tex_id];
+						dp.tex_o = &game_res->tCeil[tex_id];
 						dp.start_index = IsSet(tile.flags, Tile::F_LOW_CEILING) ? 12 : 6;
 						dp.primitive_count = 2;
 						dp.matrix = matrix_id;
@@ -2268,7 +2268,7 @@ void Game::FillDrawBatchDungeonParts(FrustumPlanes& frustum)
 						if(d2 != 0)
 						{
 							DungeonPart& dp = Add1(draw_batch.dungeon_parts);
-							dp.tp = &tWall[tex_id];
+							dp.tex_o = &game_res->tWall[tex_id];
 							dp.start_index = dungeon_part[d2].x;
 							dp.primitive_count = dungeon_part[d2].y;
 							dp.matrix = matrix_id;
@@ -2280,7 +2280,7 @@ void Game::FillDrawBatchDungeonParts(FrustumPlanes& frustum)
 						if(d2 != 0)
 						{
 							DungeonPart& dp = Add1(draw_batch.dungeon_parts);
-							dp.tp = &tWall[tex_id];
+							dp.tex_o = &game_res->tWall[tex_id];
 							dp.start_index = dungeon_part2[d2].x;
 							dp.primitive_count = dungeon_part2[d2].y;
 							dp.matrix = matrix_id;
@@ -2292,7 +2292,7 @@ void Game::FillDrawBatchDungeonParts(FrustumPlanes& frustum)
 						if(d2 != 0)
 						{
 							DungeonPart& dp = Add1(draw_batch.dungeon_parts);
-							dp.tp = &tWall[tex_id];
+							dp.tex_o = &game_res->tWall[tex_id];
 							dp.start_index = dungeon_part3[d2].x;
 							dp.primitive_count = dungeon_part3[d2].y;
 							dp.matrix = matrix_id;
@@ -2304,7 +2304,7 @@ void Game::FillDrawBatchDungeonParts(FrustumPlanes& frustum)
 						if(d2 != 0)
 						{
 							DungeonPart& dp = Add1(draw_batch.dungeon_parts);
-							dp.tp = &tWall[tex_id];
+							dp.tex_o = &game_res->tWall[tex_id];
 							dp.start_index = dungeon_part4[d2].x;
 							dp.primitive_count = dungeon_part4[d2].y;
 							dp.matrix = matrix_id;
@@ -2427,7 +2427,7 @@ void Game::FillDrawBatchDungeonParts(FrustumPlanes& frustum)
 			if(IsSet(tile.flags, Tile::F_FLOOR))
 			{
 				DungeonPart& dp = Add1(draw_batch.dungeon_parts);
-				dp.tp = &tFloor[tex_id];
+				dp.tex_o = &game_res->tFloor[tex_id];
 				dp.start_index = 0;
 				dp.primitive_count = 2;
 				dp.matrix = matrix_id;
@@ -2438,7 +2438,7 @@ void Game::FillDrawBatchDungeonParts(FrustumPlanes& frustum)
 			if(IsSet(tile.flags, Tile::F_CEILING | Tile::F_LOW_CEILING))
 			{
 				DungeonPart& dp = Add1(draw_batch.dungeon_parts);
-				dp.tp = &tCeil[tex_id];
+				dp.tex_o = &game_res->tCeil[tex_id];
 				dp.start_index = IsSet(tile.flags, Tile::F_LOW_CEILING) ? 12 : 6;
 				dp.primitive_count = 2;
 				dp.matrix = matrix_id;
@@ -2454,7 +2454,7 @@ void Game::FillDrawBatchDungeonParts(FrustumPlanes& frustum)
 				if(d2 != 0)
 				{
 					DungeonPart& dp = Add1(draw_batch.dungeon_parts);
-					dp.tp = &tWall[tex_id];
+					dp.tex_o = &game_res->tWall[tex_id];
 					dp.start_index = dungeon_part[d2].x;
 					dp.primitive_count = dungeon_part[d2].y;
 					dp.matrix = matrix_id;
@@ -2466,7 +2466,7 @@ void Game::FillDrawBatchDungeonParts(FrustumPlanes& frustum)
 				if(d2 != 0)
 				{
 					DungeonPart& dp = Add1(draw_batch.dungeon_parts);
-					dp.tp = &tWall[tex_id];
+					dp.tex_o = &game_res->tWall[tex_id];
 					dp.start_index = dungeon_part2[d2].x;
 					dp.primitive_count = dungeon_part2[d2].y;
 					dp.matrix = matrix_id;
@@ -2478,7 +2478,7 @@ void Game::FillDrawBatchDungeonParts(FrustumPlanes& frustum)
 				if(d2 != 0)
 				{
 					DungeonPart& dp = Add1(draw_batch.dungeon_parts);
-					dp.tp = &tWall[tex_id];
+					dp.tex_o = &game_res->tWall[tex_id];
 					dp.start_index = dungeon_part3[d2].x;
 					dp.primitive_count = dungeon_part3[d2].y;
 					dp.matrix = matrix_id;
@@ -2490,7 +2490,7 @@ void Game::FillDrawBatchDungeonParts(FrustumPlanes& frustum)
 				if(d2 != 0)
 				{
 					DungeonPart& dp = Add1(draw_batch.dungeon_parts);
-					dp.tp = &tWall[tex_id];
+					dp.tex_o = &game_res->tWall[tex_id];
 					dp.start_index = dungeon_part4[d2].x;
 					dp.primitive_count = dungeon_part4[d2].y;
 					dp.matrix = matrix_id;
@@ -2504,8 +2504,8 @@ void Game::FillDrawBatchDungeonParts(FrustumPlanes& frustum)
 
 	std::sort(draw_batch.dungeon_parts.begin(), draw_batch.dungeon_parts.end(), [](const DungeonPart& p1, const DungeonPart& p2)
 	{
-		if(p1.tp != p2.tp)
-			return p1.tp->GetIndex() < p2.tp->GetIndex();
+		if(p1.tex_o != p2.tex_o)
+			return p1.tex_o->GetIndex() < p2.tex_o->GetIndex();
 		else
 			return false;
 	});
@@ -3049,7 +3049,7 @@ void Game::DrawGlowingNodes(bool use_postfx)
 		}
 		else
 		{
-			V(eGlow->SetTexture(hGlowTex, tBlack->tex));
+			V(eGlow->SetTexture(hGlowTex, game_res->tBlack->tex));
 			V(eGlow->CommitChanges());
 			for(int i = 0; i < mesh->head.n_subs; ++i)
 			{
@@ -3269,13 +3269,13 @@ void Game::DrawDungeon(const vector<DungeonPart>& parts, const vector<Lights>& l
 	int last_mode = -1;
 	ID3DXEffect* e = nullptr;
 	bool first = true;
-	TexturePack* last_pack = nullptr;
+	TexOverride* last_override = nullptr;
 	uint passes;
 
 	for(vector<DungeonPart>::const_iterator it = parts.begin(), end = parts.end(); it != end; ++it)
 	{
 		const DungeonPart& dp = *it;
-		int mode = dp.tp->GetIndex();
+		int mode = dp.tex_o->GetIndex();
 
 		// change shader
 		if(mode != last_mode)
@@ -3286,8 +3286,8 @@ void Game::DrawDungeon(const vector<DungeonPart>& parts, const vector<Lights>& l
 				V(e->EndPass());
 				V(e->End());
 			}
-			e = super_shader->GetShader(super_shader->GetShaderId(false, true, game_level->cl_fog, cl_specularmap && dp.tp->specular != nullptr,
-				cl_normalmap && dp.tp->normal != nullptr, game_level->cl_lighting, false));
+			e = super_shader->GetShader(super_shader->GetShaderId(false, true, game_level->cl_fog, cl_specularmap && dp.tex_o->specular != nullptr,
+				cl_normalmap && dp.tex_o->normal != nullptr, game_level->cl_lighting, false));
 			if(first)
 			{
 				first = false;
@@ -3305,14 +3305,14 @@ void Game::DrawDungeon(const vector<DungeonPart>& parts, const vector<Lights>& l
 		}
 
 		// set textures
-		if(last_pack != dp.tp)
+		if(last_override != dp.tex_o)
 		{
-			last_pack = dp.tp;
-			V(e->SetTexture(super_shader->hTexDiffuse, last_pack->diffuse->tex));
-			if(cl_normalmap && last_pack->normal)
-				V(e->SetTexture(super_shader->hTexNormal, last_pack->normal->tex));
-			if(cl_specularmap && last_pack->specular)
-				V(e->SetTexture(super_shader->hTexSpecular, last_pack->specular->tex));
+			last_override = dp.tex_o;
+			V(e->SetTexture(super_shader->hTexDiffuse, last_override->diffuse->tex));
+			if(cl_normalmap && last_override->normal)
+				V(e->SetTexture(super_shader->hTexNormal, last_override->normal->tex));
+			if(cl_specularmap && last_override->specular)
+				V(e->SetTexture(super_shader->hTexSpecular, last_override->specular->tex));
 		}
 
 		// set matrices
@@ -3648,7 +3648,7 @@ void Game::DrawBloods(bool outside, const vector<Blood*>& bloods, const vector<L
 		Matrix m2 = m1 * game_level->camera.matViewProj;
 		V(e->SetMatrix(super_shader->hMatCombined, (D3DXMATRIX*)&m2));
 		V(e->SetMatrix(super_shader->hMatWorld, (D3DXMATRIX*)&m1));
-		V(e->SetTexture(super_shader->hTexDiffuse, tBloodSplat[blood.type]->tex));
+		V(e->SetTexture(super_shader->hTexDiffuse, game_res->tBloodSplat[blood.type]->tex));
 
 		// lights
 		if(!outside)
@@ -3937,7 +3937,7 @@ void Game::DrawLightings(const vector<Electro*>& electros)
 
 	uint passes;
 	V(eParticle->SetTechnique(techParticle));
-	V(eParticle->SetTexture(hParticleTex, tLightingLine->tex));
+	V(eParticle->SetTexture(hParticleTex, game_res->tLightingLine->tex));
 	V(eParticle->SetMatrix(hParticleCombined, (D3DXMATRIX*)&game_level->camera.matViewProj));
 	V(eParticle->Begin(&passes, 0));
 	V(eParticle->BeginPass(0));
@@ -4081,7 +4081,7 @@ void Game::DrawPortals(const vector<Portal*>& portals)
 	uint passes;
 	V(device->SetVertexDeclaration(render->GetVertexDeclaration(VDI_PARTICLE)));
 	V(eParticle->SetTechnique(techParticle));
-	V(eParticle->SetTexture(hParticleTex, tPortal->tex));
+	V(eParticle->SetTexture(hParticleTex, game_res->tPortal->tex));
 	V(eParticle->SetMatrix(hParticleCombined, (D3DXMATRIX*)&game_level->camera.matViewProj));
 	V(eParticle->Begin(&passes, 0));
 	V(eParticle->BeginPass(0));

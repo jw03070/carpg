@@ -1,5 +1,7 @@
 #pragma once
 
+#include "BloodType.h"
+
 class GameResources
 {
 public:
@@ -12,18 +14,28 @@ public:
 	void GenerateItemIconTask(TaskData& task_data);
 	void GenerateItemIcon(Item& item);
 	void DrawItemIcon(const Item& item, RenderTarget* target, float rot);
+	void PreloadItem(const Item* item);
+	Sound* GetMaterialSound(MATERIAL_TYPE attack_mat, MATERIAL_TYPE hit_mat);
+	Sound* GetItemSound(const Item* item);
 
 	TexturePtr tBlack, tPortal, tWarning, tError;
 	TexturePtr tBlood[BLOOD_MAX], tBloodSplat[BLOOD_MAX], tSpark, tSpawn, tLightingLine;
 	TexturePtr tGrass, tGrass2, tGrass3, tRoad, tFootpath, tField;
-	TexturePack tFloor[2], tWall[2], tCeil[2], tFloorBase, tWallBase, tCeilBase;
+	TexOverride tFloor[2], tWall[2], tCeil[2], tFloorBase, tWallBase, tCeilBase;
 	VertexDataPtr vdStairsUp, vdStairsDown, vdDoorHole;
 	MeshPtr aBox, aCylinder, aSphere, aCapsule;
 	MeshPtr aHuman, aHair[5], aBeard[5], aMustache[2], aEyebrows;
 	MeshPtr aArrow, aSkybox, aBag, aChest, aGrating, aDoorWall, aDoorWall2, aStairsDown, aStairsDown2, aStairsUp, aSpellball, aPressurePlate, aDoor, aDoor2, aStun;
+	SoundPtr sGulp, sCoins, sBow[2], sDoor[3], sDoorClosed[2], sDoorClose, sItem[10], sChestOpen, sChestClose, sDoorBudge, sRock, sWood, sCrystal, sMetal,
+		sBody[5], sBone, sSkin, sArenaFight, sArenaWin, sArenaLost, sUnlock, sEvil, sEat, sSummon, sZap, sCancel;
 
 private:
 	void CreateMissingTexture();
+	void PreloadBuildings();
+	void PreloadTraps();
+	void PreloadSpells();
+	void PreloadObjects();
+	void PreloadItems();
 
 	typedef std::map<Mesh*, Texture*> ItemTextureMap;
 	ItemTextureMap item_texture_map;

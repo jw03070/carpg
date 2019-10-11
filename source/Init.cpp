@@ -8,8 +8,6 @@
 #include "MainMenu.h"
 #include "ServerPanel.h"
 #include "PickServerPanel.h"
-#include "Spell.h"
-#include "Trap.h"
 #include "QuestManager.h"
 #include "UnitGroup.h"
 #include "SoundManager.h"
@@ -339,11 +337,6 @@ void Game::PostconfigureGame()
 	io::CreateDirectory("saves/single");
 	io::CreateDirectory("saves/multi");
 
-	// copy first dungeon texture to second
-	tFloor[1] = tFloorBase;
-	tCeil[1] = tCeilBase;
-	tWall[1] = tWallBase;
-
 	ItemScript::Init();
 
 	// shaders
@@ -372,7 +365,7 @@ void Game::PostconfigureGame()
 			Error("Game: %u loading errors, %u warnings.", load_errors, load_warnings);
 		else
 			Warn("Game: %u loading warnings.", load_warnings);
-		Texture* img = (load_errors > 0 ? tError : tWarning);
+		Texture* img = (load_errors > 0 ? game_res->tError : game_res->tWarning);
 		cstring text = Format(txHaveErrors, load_errors, load_warnings);
 #ifdef _DEBUG
 		game_gui->notifications->Add(text, img, 5.f);
@@ -506,242 +499,9 @@ void Game::AddLoadTasks()
 
 	game_res->LoadData();
 
-	// preload traps
-	for(uint i = 0; i < BaseTrap::n_traps; ++i)
-	{
-		BaseTrap& t = BaseTrap::traps[i];
-		if(t.mesh_id)
-		{
-			t.mesh = res_mgr->Get<Mesh>(t.mesh_id);
-			res_mgr->LoadMeshMetadata(t.mesh);
-
-			Mesh::Point* pt = t.mesh->FindPoint("hitbox");
-			assert(pt);
-			if(pt->type == Mesh::Point::BOX)
-			{
-				t.rw = pt->size.x;
-				t.h = pt->size.z;
-			}
-			else
-				t.h = t.rw = pt->size.x;
-		}
-		if(t.mesh_id2)
-			t.mesh2 = res_mgr->Get<Mesh>(t.mesh_id2);
-		if(t.sound_id)
-			t.sound = res_mgr->Get<Sound>(t.sound_id);
-		if(t.sound_id2)
-			t.sound2 = res_mgr->Get<Sound>(t.sound_id2);
-		if(t.sound_id3)
-			t.sound3 = res_mgr->Get<Sound>(t.sound_id3);
-	}
-
-	// spells
-	res_mgr->AddTaskCategory(txLoadSpells);
-	for(Spell* spell_ptr : Spell::spells)
-	{
-		Spell& spell = *spell_ptr;
-
-		if(spell.sound_cast)
-			res_mgr->Load(spell.sound_cast);
-		if(spell.sound_hit)
-			res_mgr->Load(spell.sound_hit);
-		if(spell.tex)
-			res_mgr->Load(spell.tex);
-		if(spell.tex_particle)
-			res_mgr->Load(spell.tex_particle);
-		if(spell.tex_explode)
-			res_mgr->Load(spell.tex_explode);
-		if(spell.mesh)
-			res_mgr->Load(spell.mesh);
-
-		if(spell.type == Spell::Ball || spell.type == Spell::Point)
-			spell.shape = new btSphereShape(spell.size);
-	}
-
-	// preload objects
-	for(BaseObject* p_obj : BaseObject::objs)
-	{
-		BaseObject& obj = *p_obj;
-		if(obj.variants)
-			SetupObject(obj);
-		else if(obj.mesh)
-		{
-			if(!IsSet(obj.flags, OBJ_SCALEABLE | OBJ_NO_PHYSICS) && obj.type == OBJ_CYLINDER)
-				obj.shape = new btCylinderShape(btVector3(obj.r, obj.h, obj.r));
-			SetupObject(obj);
-		}
-	}
-
-	// preload items
-	LoadItemsData();
-
-	// sounds
-	res_mgr->AddTaskCategory(txLoadSounds);
-	sGulp = res_mgr->Load<Sound>("gulp.mp3");
-	sCoins = res_mgr->Load<Sound>("moneta2.mp3");
-	sBow[0] = res_mgr->Load<Sound>("bow1.mp3");
-	sBow[1] = res_mgr->Load<Sound>("bow2.mp3");
-	sDoor[0] = res_mgr->Load<Sound>("drzwi-02.mp3");
-	sDoor[1] = res_mgr->Load<Sound>("drzwi-03.mp3");
-	sDoor[2] = res_mgr->Load<Sound>("drzwi-04.mp3");
-	sDoorClose = res_mgr->Load<Sound>("104528__skyumori__door-close-sqeuak-02.mp3");
-	sDoorClosed[0] = res_mgr->Load<Sound>("wont_budge.mp3");
-	sDoorClosed[1] = res_mgr->Load<Sound>("wont_budge2.mp3");
-	sItem[0] = res_mgr->Load<Sound>("bottle.wav"); // potion
-	sItem[1] = res_mgr->Load<Sound>("armor-light.wav"); // light armor
-	sItem[2] = res_mgr->Load<Sound>("chainmail1.wav"); // heavy armor
-	sItem[3] = res_mgr->Load<Sound>("metal-ringing.wav"); // crystal
-	sItem[4] = res_mgr->Load<Sound>("wood-small.wav"); // bow
-	sItem[5] = res_mgr->Load<Sound>("cloth-heavy.wav"); // shield
-	sItem[6] = res_mgr->Load<Sound>("sword-unsheathe.wav"); // weapon
-	sItem[7] = res_mgr->Load<Sound>("interface3.wav"); // other
-	sItem[8] = res_mgr->Load<Sound>("amulet.mp3"); // amulet
-	sItem[9] = res_mgr->Load<Sound>("ring.mp3"); // ring
-	sChestOpen = res_mgr->Load<Sound>("chest_open.mp3");
-	sChestClose = res_mgr->Load<Sound>("chest_close.mp3");
-	sDoorBudge = res_mgr->Load<Sound>("door_budge.mp3");
-	sRock = res_mgr->Load<Sound>("atak_kamien.mp3");
-	sWood = res_mgr->Load<Sound>("atak_drewno.mp3");
-	sCrystal = res_mgr->Load<Sound>("atak_krysztal.mp3");
-	sMetal = res_mgr->Load<Sound>("atak_metal.mp3");
-	sBody[0] = res_mgr->Load<Sound>("atak_cialo.mp3");
-	sBody[1] = res_mgr->Load<Sound>("atak_cialo2.mp3");
-	sBody[2] = res_mgr->Load<Sound>("atak_cialo3.mp3");
-	sBody[3] = res_mgr->Load<Sound>("atak_cialo4.mp3");
-	sBody[4] = res_mgr->Load<Sound>("atak_cialo5.mp3");
-	sBone = res_mgr->Load<Sound>("atak_kosci.mp3");
-	sSkin = res_mgr->Load<Sound>("atak_skora.mp3");
-	sArenaFight = res_mgr->Load<Sound>("arena_fight.mp3");
-	sArenaWin = res_mgr->Load<Sound>("arena_wygrana.mp3");
-	sArenaLost = res_mgr->Load<Sound>("arena_porazka.mp3");
-	sUnlock = res_mgr->Load<Sound>("unlock.mp3");
-	sEvil = res_mgr->Load<Sound>("TouchofDeath.mp3");
-	sEat = res_mgr->Load<Sound>("eat.mp3");
-	sSummon = res_mgr->Load<Sound>("whooshy-puff.wav");
-	sZap = res_mgr->Load<Sound>("zap.mp3");
-	sCancel = res_mgr->Load<Sound>("cancel.mp3");
+	
 
 	// musics
 	if(!nomusic)
 		LoadMusic(MusicType::Title);
-}
-
-//=================================================================================================
-void Game::SetupObject(BaseObject& obj)
-{
-	Mesh::Point* point;
-
-	if(IsSet(obj.flags, OBJ_PRELOAD))
-	{
-		if(obj.variants)
-		{
-			for(Mesh* mesh : obj.variants->meshes)
-				res_mgr->Load(mesh);
-		}
-		else if(obj.mesh)
-			res_mgr->Load(obj.mesh);
-	}
-
-	if(obj.variants)
-	{
-		assert(!IsSet(obj.flags, OBJ_DOUBLE_PHYSICS | OBJ_MULTI_PHYSICS)); // not supported for variant mesh yet
-		Mesh* mesh = obj.variants->meshes[0];
-		res_mgr->LoadMeshMetadata(mesh);
-		point = mesh->FindPoint("hit");
-	}
-	else
-	{
-		res_mgr->LoadMeshMetadata(obj.mesh);
-		point = obj.mesh->FindPoint("hit");
-	}
-
-	if(!point || !point->IsBox() || IsSet(obj.flags, OBJ_BUILDING | OBJ_SCALEABLE) || obj.type == OBJ_CYLINDER)
-	{
-		obj.size = Vec2::Zero;
-		obj.matrix = nullptr;
-		return;
-	}
-
-	assert(point->size.x >= 0 && point->size.y >= 0 && point->size.z >= 0);
-	obj.matrix = &point->mat;
-	obj.size = point->size.XZ();
-
-	if(!IsSet(obj.flags, OBJ_NO_PHYSICS))
-		obj.shape = new btBoxShape(ToVector3(point->size));
-
-	if(IsSet(obj.flags, OBJ_PHY_ROT))
-		obj.type = OBJ_HITBOX_ROT;
-
-	if(IsSet(obj.flags, OBJ_MULTI_PHYSICS))
-	{
-		LocalVector2<Mesh::Point*> points;
-		Mesh::Point* prev_point = point;
-
-		while(true)
-		{
-			Mesh::Point* new_point = obj.mesh->FindNextPoint("hit", prev_point);
-			if(new_point)
-			{
-				assert(new_point->IsBox() && new_point->size.x >= 0 && new_point->size.y >= 0 && new_point->size.z >= 0);
-				points.push_back(new_point);
-				prev_point = new_point;
-			}
-			else
-				break;
-		}
-
-		assert(points.size() > 1u);
-		obj.next_obj = new BaseObject[points.size() + 1];
-		for(uint i = 0, size = points.size(); i < size; ++i)
-		{
-			BaseObject& o2 = obj.next_obj[i];
-			o2.shape = new btBoxShape(ToVector3(points[i]->size));
-			if(IsSet(obj.flags, OBJ_PHY_BLOCKS_CAM))
-				o2.flags = OBJ_PHY_BLOCKS_CAM;
-			o2.matrix = &points[i]->mat;
-			o2.size = points[i]->size.XZ();
-			o2.type = obj.type;
-		}
-		obj.next_obj[points.size()].shape = nullptr;
-	}
-	else if(IsSet(obj.flags, OBJ_DOUBLE_PHYSICS))
-	{
-		Mesh::Point* point2 = obj.mesh->FindNextPoint("hit", point);
-		if(point2 && point2->IsBox())
-		{
-			assert(point2->size.x >= 0 && point2->size.y >= 0 && point2->size.z >= 0);
-			obj.next_obj = new BaseObject;
-			if(!IsSet(obj.flags, OBJ_NO_PHYSICS))
-			{
-				btBoxShape* shape = new btBoxShape(ToVector3(point2->size));
-				obj.next_obj->shape = shape;
-				if(IsSet(obj.flags, OBJ_PHY_BLOCKS_CAM))
-					obj.next_obj->flags = OBJ_PHY_BLOCKS_CAM;
-			}
-			else
-				obj.next_obj->shape = nullptr;
-			obj.next_obj->matrix = &point2->mat;
-			obj.next_obj->size = point2->size.XZ();
-			obj.next_obj->type = obj.type;
-		}
-	}
-}
-
-//=================================================================================================
-void Game::LoadItemsData()
-{
-	// preload hardcoded items
-	PreloadItem(Item::Get("beer"));
-	PreloadItem(Item::Get("vodka"));
-	PreloadItem(Item::Get("spirit"));
-	PreloadItem(Item::Get("p_hp"));
-	PreloadItem(Item::Get("p_hp2"));
-	PreloadItem(Item::Get("p_hp3"));
-	PreloadItem(Item::Get("gold"));
-	ItemListResult list = ItemList::Get("normal_food");
-	for(const Item* item : list.lis->items)
-		PreloadItem(item);
-	list = ItemList::Get("orc_food");
-	for(const Item* item : list.lis->items)
-		PreloadItem(item);
 }

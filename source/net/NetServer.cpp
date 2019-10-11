@@ -39,6 +39,7 @@
 #include "LobbyApi.h"
 #include "GameFile.h"
 #include "SaveState.h"
+#include "GameResources.h"
 
 const float CHANGE_LEVEL_TIMER = 5.f;
 
@@ -2371,9 +2372,9 @@ bool Net::ProcessControlMessageServer(BitStreamReader& f, PlayerInfo& info)
 				{
 					Sound* sound;
 					if(is_closing && Rand() % 2 == 0)
-						sound = game->sDoorClose;
+						sound = game_res->sDoorClose;
 					else
-						sound = game->sDoor[Rand() % 3];
+						sound = game_res->sDoor[Rand() % 3];
 					sound_mgr->PlaySound3d(sound, door->GetCenter(), Door::SOUND_DIST);
 				}
 
@@ -2687,7 +2688,7 @@ bool Net::ProcessControlMessageServer(BitStreamReader& f, PlayerInfo& info)
 						else
 						{
 							game_gui->mp_box->Add(Format(game->txReceivedGold, count, info.name.c_str()));
-							sound_mgr->PlaySound2d(game->sCoins);
+							sound_mgr->PlaySound2d(game_res->sCoins);
 						}
 					}
 					else if(player.IsTradingWith(target))

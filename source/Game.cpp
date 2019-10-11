@@ -853,11 +853,6 @@ void Game::ClearPointers()
 		sPostEffect[i] = nullptr;
 		tPostEffect[i] = nullptr;
 	}
-
-	// vertex data
-	vdStairsUp = nullptr;
-	vdStairsDown = nullptr;
-	vdDoorHole = nullptr;
 }
 
 //=================================================================================================
@@ -1893,13 +1888,13 @@ void Game::SetupCamera(float dt)
 				}
 				if(p.type == STAIRS_UP)
 				{
-					if(vdStairsUp->RayToMesh(to, dist, PtToPos(lvl.staircase_up), DirToRot(lvl.staircase_up_dir), tout) && tout < min_tout)
+					if(game_res->vdStairsUp->RayToMesh(to, dist, PtToPos(lvl.staircase_up), DirToRot(lvl.staircase_up_dir), tout) && tout < min_tout)
 						min_tout = tout;
 				}
 				else if(p.type == STAIRS_DOWN)
 				{
 					if(!lvl.staircase_down_in_wall
-						&& vdStairsDown->RayToMesh(to, dist, PtToPos(lvl.staircase_down), DirToRot(lvl.staircase_down_dir), tout) && tout < min_tout)
+						&& game_res->vdStairsDown->RayToMesh(to, dist, PtToPos(lvl.staircase_down), DirToRot(lvl.staircase_down_dir), tout) && tout < min_tout)
 						min_tout = tout;
 				}
 				else if(p.type == DOORS || p.type == HOLE_FOR_DOORS)
@@ -1934,7 +1929,7 @@ void Game::SetupCamera(float dt)
 							pos.x -= 0.8229f;
 					}
 
-					if(vdDoorHole->RayToMesh(to, dist, pos, rot, tout) && tout < min_tout)
+					if(game_res->vdDoorHole->RayToMesh(to, dist, pos, rot, tout) && tout < min_tout)
 						min_tout = tout;
 
 					Door* door = area.FindDoor(Int2(x, z));
@@ -2021,7 +2016,7 @@ void Game::SetupCamera(float dt)
 					min_tout = tout;
 			}
 
-			if(vdDoorHole->RayToMesh(to, dist, door.pos, door.rot, tout) && tout < min_tout)
+			if(game_res->vdDoorHole->RayToMesh(to, dist, door.pos, door.rot, tout) && tout < min_tout)
 				min_tout = tout;
 		}
 	}
@@ -3002,10 +2997,10 @@ Unit* Game::CreateUnit(UnitData& base, int level, Human* human_data, Unit* test_
 			for(auto slot : u->slots)
 			{
 				if(slot)
-					PreloadItem(slot);
+					game_res->PreloadItem(slot);
 			}
 			for(auto& slot : u->items)
-				PreloadItem(slot.item);
+				game_res->PreloadItem(slot.item);
 		}
 	}
 	if(base.trader && !test_unit)
@@ -3016,7 +3011,7 @@ Unit* Game::CreateUnit(UnitData& base, int level, Human* human_data, Unit* test_
 		if(!game_level->entering)
 		{
 			for(ItemSlot& slot : u->stock->items)
-				PreloadItem(slot.item);
+				game_res->PreloadItem(slot.item);
 		}
 	}
 
@@ -3198,7 +3193,7 @@ bool Game::CheckForHit(LevelArea& area, Unit& unit, Unit*& hitted, Mesh::Point& 
 				unit.hitted = true;
 
 				ParticleEmitter* pe = new ParticleEmitter;
-				pe->tex = tSpark;
+				pe->tex = game_res->tSpark;
 				pe->emision_interval = 0.01f;
 				pe->life = 5.f;
 				pe->particle_life = 0.5f;
@@ -3219,7 +3214,7 @@ bool Game::CheckForHit(LevelArea& area, Unit& unit, Unit*& hitted, Mesh::Point& 
 				pe->Init();
 				area.tmp->pes.push_back(pe);
 
-				sound_mgr->PlaySound3d(GetMaterialSound(MAT_IRON, MAT_ROCK), hitpoint, HIT_SOUND_DIST);
+				sound_mgr->PlaySound3d(game_res->GetMaterialSound(MAT_IRON, MAT_ROCK), hitpoint, HIT_SOUND_DIST);
 
 				if(Net::IsLocal() && unit.IsPlayer())
 				{
@@ -3284,7 +3279,7 @@ void Game::GiveDmg(Unit& taker, float dmg, Unit* giver, const Vec3* hitpoint, in
 	if(!IsSet(dmg_flags, DMG_NO_BLOOD))
 	{
 		ParticleEmitter* pe = new ParticleEmitter;
-		pe->tex = tBlood[taker.data->blood];
+		pe->tex = game_res->tBlood[taker.data->blood];
 		pe->emision_interval = 0.01f;
 		pe->life = 5.f;
 		pe->particle_life = 0.5f;
@@ -3541,7 +3536,7 @@ void Game::UpdateBullets(LevelArea& area, float dt)
 					if(hitted->IsBlocking() && AngleDiff(Clip(it->rot.y + PI), hitted->rot) < PI * 2 / 5)
 					{
 						MATERIAL_TYPE mat = hitted->GetShield().material;
-						sound_mgr->PlaySound3d(GetMaterialSound(MAT_IRON, mat), hitpoint, ARROW_HIT_SOUND_DIST);
+						sound_mgr->PlaySound3d(game_res->GetMaterialSound(MAT_IRON, mat), hitpoint, ARROW_HIT_SOUND_DIST);
 						if(Net::IsOnline())
 						{
 							NetChange& c = Add1(Net::changes);
@@ -3586,7 +3581,7 @@ void Game::UpdateBullets(LevelArea& area, float dt)
 				{
 					// play sound
 					MATERIAL_TYPE mat = hitted->GetShield().material;
-					sound_mgr->PlaySound3d(GetMaterialSound(MAT_IRON, mat), hitpoint, ARROW_HIT_SOUND_DIST);
+					sound_mgr->PlaySound3d(game_res->GetMaterialSound(MAT_IRON, mat), hitpoint, ARROW_HIT_SOUND_DIST);
 					if(Net::IsOnline())
 					{
 						NetChange& c = Add1(Net::changes);
@@ -3709,7 +3704,7 @@ void Game::UpdateBullets(LevelArea& area, float dt)
 					if(hitted->IsBlocking() && AngleDiff(Clip(it->rot.y + PI), hitted->rot) < PI * 2 / 5)
 					{
 						MATERIAL_TYPE mat = hitted->GetShield().material;
-						sound_mgr->PlaySound3d(GetMaterialSound(MAT_IRON, mat), hitpoint, ARROW_HIT_SOUND_DIST);
+						sound_mgr->PlaySound3d(game_res->GetMaterialSound(MAT_IRON, mat), hitpoint, ARROW_HIT_SOUND_DIST);
 						if(Net::IsOnline())
 						{
 							NetChange& c = Add1(Net::changes);
@@ -3782,10 +3777,10 @@ void Game::UpdateBullets(LevelArea& area, float dt)
 			// trafiono w obiekt
 			if(!it->spell)
 			{
-				sound_mgr->PlaySound3d(GetMaterialSound(MAT_IRON, MAT_ROCK), hitpoint, ARROW_HIT_SOUND_DIST);
+				sound_mgr->PlaySound3d(game_res->GetMaterialSound(MAT_IRON, MAT_ROCK), hitpoint, ARROW_HIT_SOUND_DIST);
 
 				ParticleEmitter* pe = new ParticleEmitter;
-				pe->tex = tSpark;
+				pe->tex = game_res->tSpark;
 				pe->emision_interval = 0.01f;
 				pe->life = 5.f;
 				pe->particle_life = 0.5f;
@@ -4015,31 +4010,6 @@ void Game::ExitToMap()
 	game_gui->level_gui->visible = false;
 }
 
-Sound* Game::GetMaterialSound(MATERIAL_TYPE atakuje, MATERIAL_TYPE trafiony)
-{
-	switch(trafiony)
-	{
-	case MAT_BODY:
-		return sBody[Rand() % 5];
-	case MAT_BONE:
-		return sBone;
-	case MAT_CLOTH:
-	case MAT_SKIN:
-		return sSkin;
-	case MAT_IRON:
-		return sMetal;
-	case MAT_WOOD:
-		return sWood;
-	case MAT_ROCK:
-		return sRock;
-	case MAT_CRYSTAL:
-		return sCrystal;
-	default:
-		assert(0);
-		return nullptr;
-	}
-}
-
 void Game::PlayAttachedSound(Unit& unit, Sound* sound, float distance)
 {
 	assert(sound);
@@ -4100,7 +4070,7 @@ Game::ATTACK_RESULT Game::DoGenericAttack(LevelArea& area, Unit& attacker, Unit&
 			c.id = weapon_mat;
 			c.count = hitted_mat;
 		}
-		sound_mgr->PlaySound3d(GetMaterialSound(weapon_mat, hitted_mat), hitpoint, HIT_SOUND_DIST);
+		sound_mgr->PlaySound3d(game_res->GetMaterialSound(weapon_mat, hitted_mat), hitpoint, HIT_SOUND_DIST);
 
 		// train blocking
 		if(hitted.IsPlayer())
@@ -4451,7 +4421,7 @@ void Game::UpdateTraps(LevelArea& area, float dt)
 								float dmg = CombatHelper::CalculateDamage(attack, def);
 
 								// dŸwiêk trafienia
-								sound_mgr->PlaySound3d(GetMaterialSound(MAT_IRON, unit->GetBodyMaterial()), unit->pos + Vec3(0, 1.f, 0), HIT_SOUND_DIST);
+								sound_mgr->PlaySound3d(game_res->GetMaterialSound(MAT_IRON, unit->GetBodyMaterial()), unit->pos + Vec3(0, 1.f, 0), HIT_SOUND_DIST);
 
 								// train player armor skill
 								if(unit->IsPlayer())
@@ -4608,7 +4578,7 @@ void Game::UpdateTraps(LevelArea& area, float dt)
 						area.tmp->tpes.push_back(tpe2);
 						b.trail2 = tpe2;
 
-						sound_mgr->PlaySound3d(sBow[Rand() % 2], b.pos, SHOOT_SOUND_DIST);
+						sound_mgr->PlaySound3d(game_res->sBow[Rand() % 2], b.pos, SHOOT_SOUND_DIST);
 
 						if(Net::IsServer())
 						{
@@ -5127,49 +5097,11 @@ void Game::ClearGame()
 	EntitySystem::clear = false;
 }
 
-Sound* Game::GetItemSound(const Item* item)
+void ApplyTextureOverrideToSubmesh(Mesh::Submesh& sub, TexOverride& tex_o)
 {
-	assert(item);
-
-	switch(item->type)
-	{
-	case IT_WEAPON:
-		return sItem[6];
-	case IT_BOW:
-		return sItem[4];
-	case IT_SHIELD:
-		return sItem[5];
-	case IT_ARMOR:
-		if(item->ToArmor().armor_type != AT_LIGHT)
-			return sItem[2];
-		else
-			return sItem[1];
-	case IT_AMULET:
-		return sItem[8];
-	case IT_RING:
-		return sItem[9];
-	case IT_CONSUMABLE:
-		if(Any(item->ToConsumable().cons_type, ConsumableType::Food, ConsumableType::Herb))
-			return sItem[7];
-		else
-			return sItem[0];
-	case IT_OTHER:
-		if(IsSet(item->flags, ITEM_CRYSTAL_SOUND))
-			return sItem[3];
-		else
-			return sItem[7];
-	case IT_GOLD:
-		return sCoins;
-	default:
-		return sItem[7];
-	}
-}
-
-void ApplyTexturePackToSubmesh(Mesh::Submesh& sub, TexturePack& tp)
-{
-	sub.tex = tp.diffuse;
-	sub.tex_normal = tp.normal;
-	sub.tex_specular = tp.specular;
+	sub.tex = tex_o.diffuse;
+	sub.tex_normal = tex_o.normal;
+	sub.tex_specular = tex_o.specular;
 }
 
 void ApplyDungeonLightToMesh(Mesh& mesh)
@@ -5182,29 +5114,29 @@ void ApplyDungeonLightToMesh(Mesh& mesh)
 	}
 }
 
-void Game::ApplyLocationTexturePack(TexturePack& floor, TexturePack& wall, TexturePack& ceil, LocationTexturePack& tex)
+void Game::ApplyLocationTextureOverride(TexOverride& floor, TexOverride& wall, TexOverride& ceil, LocationTexturePack& tex)
 {
-	ApplyLocationTexturePack(floor, tex.floor, tFloorBase);
-	ApplyLocationTexturePack(wall, tex.wall, tWallBase);
-	ApplyLocationTexturePack(ceil, tex.ceil, tCeilBase);
+	ApplyLocationTextureOverride(floor, tex.floor, game_res->tFloorBase);
+	ApplyLocationTextureOverride(wall, tex.wall, game_res->tWallBase);
+	ApplyLocationTextureOverride(ceil, tex.ceil, game_res->tCeilBase);
 }
 
-void Game::ApplyLocationTexturePack(TexturePack& pack, LocationTexturePack::Entry& e, TexturePack& pack_def)
+void Game::ApplyLocationTextureOverride(TexOverride& tex_o, LocationTexturePack::Entry& e, TexOverride& tex_o_def)
 {
 	if(e.tex)
 	{
-		pack.diffuse = e.tex;
-		pack.normal = e.tex_normal;
-		pack.specular = e.tex_specular;
+		tex_o.diffuse = e.tex;
+		tex_o.normal = e.tex_normal;
+		tex_o.specular = e.tex_specular;
 	}
 	else
-		pack = pack_def;
+		tex_o = tex_o_def;
 
-	res_mgr->Load(pack.diffuse);
-	if(pack.normal)
-		res_mgr->Load(pack.normal);
-	if(pack.specular)
-		res_mgr->Load(pack.specular);
+	res_mgr->Load(tex_o.diffuse);
+	if(tex_o.normal)
+		res_mgr->Load(tex_o.normal);
+	if(tex_o.specular)
+		res_mgr->Load(tex_o.specular);
 }
 
 void Game::SetDungeonParamsAndTextures(BaseLocation& base)
@@ -5217,19 +5149,19 @@ void Game::SetDungeonParamsAndTextures(BaseLocation& base)
 	clear_color_next = Color(int(game_level->fog_color.x * 255), int(game_level->fog_color.y * 255), int(game_level->fog_color.z * 255));
 
 	// tekstury podziemi
-	ApplyLocationTexturePack(tFloor[0], tWall[0], tCeil[0], base.tex);
+	ApplyLocationTextureOverride(game_res->tFloor[0], game_res->tWall[0], game_res->tCeil[0], base.tex);
 
 	// druga tekstura
 	if(base.tex2 != -1)
 	{
 		BaseLocation& base2 = g_base_locations[base.tex2];
-		ApplyLocationTexturePack(tFloor[1], tWall[1], tCeil[1], base2.tex);
+		ApplyLocationTextureOverride(game_res->tFloor[1], game_res->tWall[1], game_res->tCeil[1], base2.tex);
 	}
 	else
 	{
-		tFloor[1] = tFloor[0];
-		tCeil[1] = tCeil[0];
-		tWall[1] = tWall[0];
+		game_res->tFloor[1] = game_res->tFloor[0];
+		game_res->tCeil[1] = game_res->tCeil[0];
+		game_res->tWall[1] = game_res->tWall[0];
 	}
 
 	// ustawienia uv podziemi
@@ -5244,13 +5176,13 @@ void Game::SetDungeonParamsAndTextures(BaseLocation& base)
 void Game::SetDungeonParamsToMeshes()
 {
 	// tekstury schodów / pu³apek
-	ApplyTexturePackToSubmesh(game_res->aStairsDown->subs[0], tFloor[0]);
-	ApplyTexturePackToSubmesh(game_res->aStairsDown->subs[2], tWall[0]);
-	ApplyTexturePackToSubmesh(game_res->aStairsDown2->subs[0], tFloor[0]);
-	ApplyTexturePackToSubmesh(game_res->aStairsDown2->subs[2], tWall[0]);
-	ApplyTexturePackToSubmesh(game_res->aStairsUp->subs[0], tFloor[0]);
-	ApplyTexturePackToSubmesh(game_res->aStairsUp->subs[2], tWall[0]);
-	ApplyTexturePackToSubmesh(game_res->aDoorWall->subs[0], tWall[0]);
+	ApplyTextureOverrideToSubmesh(game_res->aStairsDown->subs[0], game_res->tFloor[0]);
+	ApplyTextureOverrideToSubmesh(game_res->aStairsDown->subs[2], game_res->tWall[0]);
+	ApplyTextureOverrideToSubmesh(game_res->aStairsDown2->subs[0], game_res->tFloor[0]);
+	ApplyTextureOverrideToSubmesh(game_res->aStairsDown2->subs[2], game_res->tWall[0]);
+	ApplyTextureOverrideToSubmesh(game_res->aStairsUp->subs[0], game_res->tFloor[0]);
+	ApplyTextureOverrideToSubmesh(game_res->aStairsUp->subs[2], game_res->tWall[0]);
+	ApplyTextureOverrideToSubmesh(game_res->aDoorWall->subs[0], game_res->tWall[0]);
 	ApplyDungeonLightToMesh(*game_res->aStairsDown);
 	ApplyDungeonLightToMesh(*game_res->aStairsDown2);
 	ApplyDungeonLightToMesh(*game_res->aStairsUp);
@@ -5260,17 +5192,17 @@ void Game::SetDungeonParamsToMeshes()
 	// apply texture/lighting to trap to make it same texture as dungeon
 	if(BaseTrap::traps[TRAP_ARROW].mesh->state == ResourceState::Loaded)
 	{
-		ApplyTexturePackToSubmesh(BaseTrap::traps[TRAP_ARROW].mesh->subs[0], tFloor[0]);
+		ApplyTextureOverrideToSubmesh(BaseTrap::traps[TRAP_ARROW].mesh->subs[0], game_res->tFloor[0]);
 		ApplyDungeonLightToMesh(*BaseTrap::traps[TRAP_ARROW].mesh);
 	}
 	if(BaseTrap::traps[TRAP_POISON].mesh->state == ResourceState::Loaded)
 	{
-		ApplyTexturePackToSubmesh(BaseTrap::traps[TRAP_POISON].mesh->subs[0], tFloor[0]);
+		ApplyTextureOverrideToSubmesh(BaseTrap::traps[TRAP_POISON].mesh->subs[0], game_res->tFloor[0]);
 		ApplyDungeonLightToMesh(*BaseTrap::traps[TRAP_POISON].mesh);
 	}
 
 	// druga tekstura
-	ApplyTexturePackToSubmesh(game_res->aDoorWall2->subs[0], tWall[1]);
+	ApplyTextureOverrideToSubmesh(game_res->aDoorWall2->subs[0], game_res->tWall[1]);
 }
 
 void Game::EnterLevel(LocationGenerator* loc_gen)
@@ -5566,7 +5498,7 @@ void Game::UpdateArea(LevelArea& area, float dt)
 					door.state = Door::Opening2;
 					door.mesh_inst->Play(&door.mesh_inst->mesh->anims[0], PLAY_ONCE | PLAY_NO_BLEND | PLAY_STOP_AT_END, 0);
 					// mo¿na by daæ lepszy punkt dŸwiêku
-					sound_mgr->PlaySound3d(sDoorBudge, door.pos, Door::BLOCKED_SOUND_DIST);
+					sound_mgr->PlaySound3d(game_res->sDoorBudge, door.pos, Door::BLOCKED_SOUND_DIST);
 				}
 			}
 		}
@@ -5594,9 +5526,9 @@ void Game::UpdateArea(LevelArea& area, float dt)
 void Game::PlayHitSound(MATERIAL_TYPE mat2, MATERIAL_TYPE mat, const Vec3& hitpoint, float range, bool dmg)
 {
 	// sounds
-	sound_mgr->PlaySound3d(GetMaterialSound(mat2, mat), hitpoint, range);
+	sound_mgr->PlaySound3d(game_res->GetMaterialSound(mat2, mat), hitpoint, range);
 	if(mat != MAT_BODY && dmg)
-		sound_mgr->PlaySound3d(GetMaterialSound(mat2, MAT_BODY), hitpoint, range);
+		sound_mgr->PlaySound3d(game_res->GetMaterialSound(mat2, MAT_BODY), hitpoint, range);
 
 	if(Net::IsOnline())
 	{
@@ -5787,7 +5719,7 @@ void Game::PreloadResources(bool worldmap)
 	}
 
 	for(const Item* item : items_load)
-		PreloadItem(item);
+		game_res->PreloadItem(item);
 }
 
 void Game::PreloadUsables(vector<Usable*>& usables)
@@ -5864,74 +5796,6 @@ void Game::PreloadItems(vector<ItemSlot>& items)
 {
 	for(auto& slot : items)
 		items_load.insert(slot.item);
-}
-
-void Game::PreloadItem(const Item* p_item)
-{
-	Item& item = *(Item*)p_item;
-	if(item.state == ResourceState::Loaded)
-		return;
-
-	if(res_mgr->IsLoadScreen())
-	{
-		if(item.state != ResourceState::Loading)
-		{
-			if(item.type == IT_ARMOR)
-			{
-				Armor& armor = item.ToArmor();
-				if(!armor.tex_override.empty())
-				{
-					for(TexOverride& tex_o : armor.tex_override)
-					{
-						if(tex_o.diffuse)
-							res_mgr->Load(tex_o.diffuse);
-					}
-				}
-			}
-			else if(item.type == IT_BOOK)
-			{
-				Book& book = item.ToBook();
-				res_mgr->Load(book.scheme->tex);
-			}
-
-			if(item.mesh)
-				res_mgr->Load(item.mesh);
-			else if(item.tex)
-				res_mgr->Load(item.tex);
-			res_mgr->AddTask(&item, TaskCallback(game_res, &GameResources::GenerateItemIconTask));
-
-			item.state = ResourceState::Loading;
-		}
-	}
-	else
-	{
-		// instant loading
-		if(item.type == IT_ARMOR)
-		{
-			Armor& armor = item.ToArmor();
-			if(!armor.tex_override.empty())
-			{
-				for(TexOverride& tex_o : armor.tex_override)
-				{
-					if(tex_o.diffuse)
-						res_mgr->Load(tex_o.diffuse);
-				}
-			}
-		}
-		else if(item.type == IT_BOOK)
-		{
-			Book& book = item.ToBook();
-			res_mgr->Load(book.scheme->tex);
-		}
-
-		if(item.mesh)
-			res_mgr->Load(item.mesh);
-		else if(item.tex)
-			res_mgr->Load(item.tex);
-		game_res->GenerateItemIcon(item);
-
-		item.state = ResourceState::Loaded;
-	}
 }
 
 void Game::VerifyResources()

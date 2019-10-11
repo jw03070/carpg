@@ -136,7 +136,7 @@ void Chest::OpenClose(Unit* unit)
 		assert(!user);
 		user = unit;
 		mesh_inst->Play(&mesh_inst->mesh->anims[0], PLAY_PRIO1 | PLAY_ONCE | PLAY_STOP_AT_END, 0);
-		sound_mgr->PlaySound3d(game->sChestOpen, GetCenter(), SOUND_DIST);
+		sound_mgr->PlaySound3d(game_res->sChestOpen, GetCenter(), SOUND_DIST);
 		if(Net::IsLocal() && handler)
 			handler->HandleChestEvent(ChestEventHandler::Opened, this);
 		if(Net::IsServer())
@@ -153,7 +153,7 @@ void Chest::OpenClose(Unit* unit)
 		assert(user);
 		user = nullptr;
 		mesh_inst->Play(&mesh_inst->mesh->anims[0], PLAY_PRIO1 | PLAY_ONCE | PLAY_STOP_AT_END | PLAY_BACK, 0);
-		sound_mgr->PlaySound3d(game->sChestClose, GetCenter(), SOUND_DIST);
+		sound_mgr->PlaySound3d(game_res->sChestClose, GetCenter(), SOUND_DIST);
 		if(Net::IsServer())
 		{
 			NetChange& c = Add1(Net::changes);

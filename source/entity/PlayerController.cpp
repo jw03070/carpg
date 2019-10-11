@@ -29,6 +29,7 @@
 #include "GroundItem.h"
 #include "ScriptManager.h"
 #include "Quest_Scripted.h"
+#include "GameResources.h"
 
 LocalPlayerData PlayerController::data;
 
@@ -3031,7 +3032,7 @@ void PlayerController::UpdateMove(float dt, bool allow_rot)
 					door->state = Door::Opening;
 					door->mesh_inst->Play(&door->mesh_inst->mesh->anims[0], PLAY_ONCE | PLAY_STOP_AT_END | PLAY_NO_BLEND, 0);
 					if(Rand() % 2 == 0)
-						sound_mgr->PlaySound3d(game->sDoor[Rand() % 3], door->GetCenter(), Door::SOUND_DIST);
+						sound_mgr->PlaySound3d(game_res->sDoor[Rand() % 3], door->GetCenter(), Door::SOUND_DIST);
 					if(Net::IsOnline())
 					{
 						NetChange& c = Add1(Net::changes);
@@ -3060,7 +3061,7 @@ void PlayerController::UpdateMove(float dt, bool allow_rot)
 					Vec3 center = door->GetCenter();
 					if(key && unit->HaveItem(Item::Get(key)))
 					{
-						sound_mgr->PlaySound3d(game->sUnlock, center, Door::UNLOCK_SOUND_DIST);
+						sound_mgr->PlaySound3d(game_res->sUnlock, center, Door::UNLOCK_SOUND_DIST);
 						game_gui->messages->AddGameMsg3(GMS_UNLOCK_DOOR);
 						if(!game_level->location->outside)
 							game_level->minimap_opened_doors = true;
@@ -3068,7 +3069,7 @@ void PlayerController::UpdateMove(float dt, bool allow_rot)
 						door->state = Door::Opening;
 						door->mesh_inst->Play(&door->mesh_inst->mesh->anims[0], PLAY_ONCE | PLAY_STOP_AT_END | PLAY_NO_BLEND, 0);
 						if(Rand() % 2 == 0)
-							sound_mgr->PlaySound3d(game->sDoor[Rand() % 3], center, Door::SOUND_DIST);
+							sound_mgr->PlaySound3d(game_res->sDoor[Rand() % 3], center, Door::SOUND_DIST);
 						if(Net::IsOnline())
 						{
 							NetChange& c = Add1(Net::changes);
@@ -3080,7 +3081,7 @@ void PlayerController::UpdateMove(float dt, bool allow_rot)
 					else
 					{
 						game_gui->messages->AddGameMsg3(GMS_NEED_KEY);
-						sound_mgr->PlaySound3d(game->sDoorClosed[Rand() % 2], center, Door::SOUND_DIST);
+						sound_mgr->PlaySound3d(game_res->sDoorClosed[Rand() % 2], center, Door::SOUND_DIST);
 					}
 				}
 			}
@@ -3093,9 +3094,9 @@ void PlayerController::UpdateMove(float dt, bool allow_rot)
 				{
 					Sound* sound;
 					if(Rand() % 2 == 0)
-						sound = game->sDoorClose;
+						sound = game_res->sDoorClose;
 					else
-						sound = game->sDoor[Rand() % 3];
+						sound = game_res->sDoor[Rand() % 3];
 					sound_mgr->PlaySound3d(sound, door->GetCenter(), Door::SOUND_DIST);
 				}
 				if(Net::IsOnline())
@@ -3124,7 +3125,7 @@ void PlayerController::UpdateMove(float dt, bool allow_rot)
 					u.AddItem2(item.item, item.count, item.team_count, false);
 
 					if(item.item->type == IT_GOLD)
-						sound_mgr->PlaySound2d(game->sCoins);
+						sound_mgr->PlaySound2d(game_res->sCoins);
 
 					if(Net::IsOnline())
 					{
@@ -3434,7 +3435,7 @@ void PlayerController::UpdateMove(float dt, bool allow_rot)
 				data.action_target = nullptr;
 			}
 			else
-				sound_mgr->PlaySound2d(game->sCancel);
+				sound_mgr->PlaySound2d(game_res->sCancel);
 		}
 	}
 	else
