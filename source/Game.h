@@ -111,6 +111,7 @@ public:
 	Game();
 	~Game();
 
+	bool OnInit() override;
 	void OnCleanup() override;
 	void OnDraw() override;
 	void DrawGame(RenderTarget* target);
@@ -130,13 +131,9 @@ public:
 	void PreloadData();
 	void ReportError(int id, cstring text, bool once = false);
 
-	// initialization
-	void BeforeInit();
-	bool OnInit() override;
+	// initialization & loading
 	void PreconfigureGame();
 	void PreloadLanguage();
-
-	// loading system
 	void LoadSystem();
 	void AddFilesystem();
 	void LoadDatafiles();
@@ -145,12 +142,7 @@ public:
 	void SetGameText();
 	void SetStatsText();
 	void ConfigureGame();
-
-	// loading data
 	void LoadData();
-	void AddLoadTasks();
-
-	// after loading data
 	void PostconfigureGame();
 	void StartGameMode();
 
@@ -210,7 +202,6 @@ public:
 	//-----------------------------------------------------------------
 	// SOUND & MUSIC
 	//-----------------------------------------------------------------
-	void LoadMusic(MusicType type, bool new_load_screen = true, bool instant = false);
 	void SetMusic();
 	void SetMusic(MusicType type);
 	void SetupTracks();
@@ -505,7 +496,6 @@ public:
 	//-----------------------------------------------------------------
 	// LOCALIZED TEXTS
 	//-----------------------------------------------------------------
-	cstring txLoadGuiTextures, txLoadParticles, txLoadPhysicMeshes, txLoadModels, txLoadSpells, txLoadSounds, txLoadMusic, txGenerateWorld;
 	cstring txCreatingListOfFiles, txConfiguringGame, txLoadingItems, txLoadingObjects, txLoadingSpells, txLoadingUnits, txLoadingMusics, txLoadingBuildings,
 		txLoadingRequires, txLoadingShaders, txLoadingDialogs, txLoadingLanguageFiles, txPreloadAssets, txLoadingQuests, txLoadingClasses;
 	cstring txAiNoHpPot[2], txAiNoMpPot[2], txAiCity[2], txAiVillage[2], txAiForest, txAiMoonwell, txAiAcademy, txAiCampEmpty, txAiCampFull, txAiFort,

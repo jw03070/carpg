@@ -3991,8 +3991,7 @@ bool Level::Read(BitStreamReader& f, bool loaded_resources)
 		Error("Read level: Broken music.");
 		return false;
 	}
-	if(!sound_mgr->IsMusicDisabled())
-		game->LoadMusic(music, false, true);
+	game_res->LoadMusic(music, false, true);
 	if(world->IsBossLevel())
 		game->SetMusic();
 	else

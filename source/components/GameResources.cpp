@@ -9,7 +9,10 @@
 #include "SceneNode.h"
 #include "Language.h"
 #include "Game.h"
+#include "GameGui.h"
+#include "Level.h"
 #include <ResourceManager.h>
+#include <SoundManager.h>
 #include <Mesh.h>
 #include <Render.h>
 #include <DirectX.h>
@@ -57,15 +60,12 @@ void GameResources::CreateMissingTexture()
 void GameResources::LoadLanguage()
 {
 	txLoadGuiTextures = Str("loadGuiTextures");
+	txLoadTerrainTextures = Str("loadTerrainTextures");
 	txLoadParticles = Str("loadParticles");
-	txLoadPhysicMeshes = Str("loadPhysicMeshes");
 	txLoadModels = Str("loadModels");
 	txLoadSpells = Str("loadSpells");
 	txLoadSounds = Str("loadSounds");
 	txLoadMusic = Str("loadMusic");
-	//txGenerateWorld = Str("generateWorld");
-	//txHaveErrors = Str("haveErrors");
-	FIXME;
 }
 
 //=================================================================================================
@@ -78,6 +78,8 @@ void GameResources::LoadData()
 	tWarning = res_mgr->Load<Texture>("warning.png");
 	tError = res_mgr->Load<Texture>("error.png");
 	Action::LoadData();
+	game_gui->LoadData();
+	net->LoadData();
 
 	// particles
 	res_mgr->AddTaskCategory(txLoadParticles);
@@ -96,8 +98,10 @@ void GameResources::LoadData()
 	tSpark = res_mgr->Load<Texture>("iskra.png");
 	tSpawn = res_mgr->Load<Texture>("spawn_fog.png");
 	tLightingLine = res_mgr->Load<Texture>("lighting_line.png");
+	game_level->LoadData();
 
 	// preload terrain textures
+	res_mgr->AddTaskCategory(txLoadTerrainTextures);
 	tGrass = res_mgr->Load<Texture>("trawa.jpg");
 	tGrass2 = res_mgr->Load<Texture>("Grass0157_5_S.jpg");
 	tGrass3 = res_mgr->Load<Texture>("LeavesDead0045_1_S.jpg");
@@ -114,17 +118,9 @@ void GameResources::LoadData()
 	tCeilBase.normal = nullptr;
 	tCeilBase.specular = nullptr;
 	BaseLocation::PreloadTextures();
-
-	// copy first dungeon texture to second
 	tFloor[1] = tFloorBase;
 	tCeil[1] = tCeilBase;
 	tWall[1] = tWallBase;
-
-	// physic meshes
-	res_mgr->AddTaskCategory(txLoadPhysicMeshes);
-	vdStairsUp = res_mgr->Load<VertexData>("schody_gora.phy");
-	vdStairsDown = res_mgr->Load<VertexData>("schody_dol.phy");
-	vdDoorHole = res_mgr->Load<VertexData>("nadrzwi.phy");
 
 	// meshes
 	res_mgr->AddTaskCategory(txLoadModels);
@@ -166,6 +162,11 @@ void GameResources::LoadData()
 	PreloadSpells();
 	PreloadObjects();
 	PreloadItems();
+
+	// physic meshes
+	vdStairsUp = res_mgr->Load<VertexData>("schody_gora.phy");
+	vdStairsDown = res_mgr->Load<VertexData>("schody_dol.phy");
+	vdDoorHole = res_mgr->Load<VertexData>("nadrzwi.phy");
 
 	// sounds
 	res_mgr->AddTaskCategory(txLoadSounds);
@@ -212,8 +213,12 @@ void GameResources::LoadData()
 	sSummon = res_mgr->Load<Sound>("whooshy-puff.wav");
 	sZap = res_mgr->Load<Sound>("zap.mp3");
 	sCancel = res_mgr->Load<Sound>("cancel.mp3");
+
+	// music
+	LoadMusic(MusicType::Title);
 }
 
+//=================================================================================================
 void GameResources::PreloadBuildings()
 {
 	for(Building* b : Building::buildings)
@@ -225,6 +230,7 @@ void GameResources::PreloadBuildings()
 	}
 }
 
+//=================================================================================================
 void GameResources::PreloadTraps()
 {
 	for(uint i = 0; i < BaseTrap::n_traps; ++i)
@@ -256,6 +262,7 @@ void GameResources::PreloadTraps()
 	}
 }
 
+//=================================================================================================
 void GameResources::PreloadSpells()
 {
 	res_mgr->AddTaskCategory(txLoadSpells);
@@ -281,6 +288,7 @@ void GameResources::PreloadSpells()
 	}
 }
 
+//=================================================================================================
 void GameResources::PreloadObjects()
 {
 	for(BaseObject* p_obj : BaseObject::objs)
@@ -391,6 +399,7 @@ void GameResources::PreloadObjects()
 	}
 }
 
+//=================================================================================================
 void GameResources::PreloadItems()
 {
 	PreloadItem(Item::Get("beer"));
@@ -408,6 +417,7 @@ void GameResources::PreloadItems()
 		PreloadItem(item);
 }
 
+//=================================================================================================
 void GameResources::PreloadItem(const Item* p_item)
 {
 	Item& item = *(Item*)p_item;
@@ -475,7 +485,6 @@ void GameResources::PreloadItem(const Item* p_item)
 		item.state = ResourceState::Loaded;
 	}
 }
-
 
 //=================================================================================================
 void GameResources::GenerateItemIconTask(TaskData& task_data)
@@ -616,6 +625,7 @@ void GameResources::DrawItemIcon(const Item& item, RenderTarget* target, float r
 	render->SetTarget(nullptr);
 }
 
+//=================================================================================================
 Sound* GameResources::GetMaterialSound(MATERIAL_TYPE attack_mat, MATERIAL_TYPE hit_mat)
 {
 	switch(hit_mat)
@@ -641,6 +651,7 @@ Sound* GameResources::GetMaterialSound(MATERIAL_TYPE attack_mat, MATERIAL_TYPE h
 	}
 }
 
+//=================================================================================================
 Sound* GameResources::GetItemSound(const Item* item)
 {
 	assert(item);
@@ -677,4 +688,43 @@ Sound* GameResources::GetItemSound(const Item* item)
 	default:
 		return sItem[7];
 	}
+}
+
+//=================================================================================================
+void GameResources::LoadMusic(MusicType type, bool new_load_screen, bool instant)
+{
+	if(sound_mgr->IsMusicDisabled())
+		return;
+
+	bool first = true;
+
+	for(MusicTrack* track : MusicTrack::tracks)
+	{
+		if(track->type == type)
+		{
+			if(first)
+			{
+				if(track->music->IsLoaded())
+				{
+					// music for this type is loaded
+					return;
+				}
+				if(new_load_screen)
+					res_mgr->AddTaskCategory(txLoadMusic);
+				first = false;
+			}
+			if(instant)
+				res_mgr->LoadInstant(track->music);
+			else
+				res_mgr->Load(track->music);
+		}
+	}
+}
+
+//=================================================================================================
+void GameResources::LoadCommonMusic()
+{
+	LoadMusic(MusicType::Boss, false);
+	LoadMusic(MusicType::Death, false);
+	LoadMusic(MusicType::Travel, false);
 }

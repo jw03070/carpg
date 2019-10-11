@@ -4197,12 +4197,7 @@ bool Net::ReadWorldData(BitStreamReader& f)
 	}
 
 	// load music
-	if(!sound_mgr->IsMusicDisabled())
-	{
-		game->LoadMusic(MusicType::Boss, false);
-		game->LoadMusic(MusicType::Death, false);
-		game->LoadMusic(MusicType::Travel, false);
-	}
+	game_res->LoadCommonMusic();
 
 	return true;
 }
