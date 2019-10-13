@@ -2,6 +2,7 @@ Historia zmian
 
 --------------------------------------------------------------------------------
 Fixes:
++ MP packet logger
 - crash przy wchodzeniu do lokalizacji jeœli przy wychodzeniu z poprzedniej cz³onkowie dru¿yny jedli/pili [Anonymous]
 
 --------------------------------------------------------------------------------

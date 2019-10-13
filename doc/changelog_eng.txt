@@ -2,6 +2,7 @@ Changelog
 
 --------------------------------------------------------------------------------
 Fixes:
++ logowanie pakietów MP
 - crash when entering location when on leaving location team members was eating/drinking [Anonymous]
 
 --------------------------------------------------------------------------------
