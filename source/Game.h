@@ -362,6 +362,7 @@ public:
 	Arena* arena;
 	DebugDrawer* debug_drawer;
 	GrassShader* grass_shader;
+	ParticleShader* particle_shader;
 	SuperShader* super_shader;
 	TerrainShader* terrain_shader;
 
@@ -487,10 +488,10 @@ public:
 	//-----------------------------------------------------------------
 	RenderTarget* rt_save, *rt_item_rot;
 	Texture tMinimap;
-	ID3DXEffect* eMesh, *eParticle, *eSkybox, *eArea, *ePostFx, *eGlow;
-	D3DXHANDLE techMesh, techMeshDir, techMeshSimple, techMeshSimple2, techMeshExplo, techParticle, techSkybox, techArea, techTrail, techGlowMesh, techGlowAni;
+	ID3DXEffect* eMesh, *eSkybox, *eArea, *ePostFx, *eGlow;
+	D3DXHANDLE techMesh, techMeshDir, techMeshSimple, techMeshSimple2, techMeshExplo, techSkybox, techArea, techGlowMesh, techGlowAni;
 	D3DXHANDLE hMeshCombined, hMeshWorld, hMeshTex, hMeshFogColor, hMeshFogParam, hMeshTint, hMeshAmbientColor, hMeshLightDir, hMeshLightColor, hMeshLights,
-		hParticleCombined, hParticleTex, hSkyboxCombined, hSkyboxTex, hAreaCombined, hAreaColor, hAreaPlayerPos, hAreaRange, hPostTex, hPostPower, hPostSkill,
+		hSkyboxCombined, hSkyboxTex, hAreaCombined, hAreaColor, hAreaPlayerPos, hAreaRange, hPostTex, hPostPower, hPostSkill,
 		hGlowCombined, hGlowBones, hGlowColor, hGlowTex;
 
 	//-----------------------------------------------------------------

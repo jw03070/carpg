@@ -85,6 +85,7 @@
 #include "GameGui.h"
 #include "CreateServerPanel.h"
 #include "PickServerPanel.h"
+#include "ParticleShader.h"
 
 const float LIMIT_DT = 0.3f;
 Game* global::game;
@@ -424,6 +425,7 @@ void Game::PostconfigureGame()
 	// shaders
 	render->RegisterShader(debug_drawer = new DebugDrawer);
 	render->RegisterShader(grass_shader = new GrassShader);
+	render->RegisterShader(particle_shader = new ParticleShader);
 	render->RegisterShader(super_shader = new SuperShader);
 	render->RegisterShader(terrain_shader = new TerrainShader);
 	debug_drawer->SetHandler(delegate<void(DebugDrawer*)>(this, &Game::OnDebugDraw));
@@ -1141,8 +1143,6 @@ void Game::OnReload()
 {
 	if(eMesh)
 		V(eMesh->OnResetDevice());
-	if(eParticle)
-		V(eParticle->OnResetDevice());
 	if(eSkybox)
 		V(eSkybox->OnResetDevice());
 	if(eArea)
@@ -1169,8 +1169,6 @@ void Game::OnReset()
 
 	if(eMesh)
 		V(eMesh->OnLostDevice());
-	if(eParticle)
-		V(eParticle->OnLostDevice());
 	if(eSkybox)
 		V(eSkybox->OnLostDevice());
 	if(eArea)
@@ -1327,7 +1325,6 @@ void Game::ClearPointers()
 {
 	// shadery
 	eMesh = nullptr;
-	eParticle = nullptr;
 	eSkybox = nullptr;
 	eArea = nullptr;
 	ePostFx = nullptr;
@@ -1728,7 +1725,6 @@ void Game::ReloadShaders()
 	try
 	{
 		eMesh = render->CompileShader("mesh.fx");
-		eParticle = render->CompileShader("particle.fx");
 		eSkybox = render->CompileShader("skybox.fx");
 		eArea = render->CompileShader("area.fx");
 		ePostFx = render->CompileShader("post.fx");
@@ -1750,7 +1746,6 @@ void Game::ReloadShaders()
 void Game::ReleaseShaders()
 {
 	SafeRelease(eMesh);
-	SafeRelease(eParticle);
 	SafeRelease(eSkybox);
 	SafeRelease(eArea);
 	SafeRelease(ePostFx);
@@ -2542,7 +2537,6 @@ void Game::LoadShaders()
 	Info("Loading shaders.");
 
 	eMesh = render->CompileShader("mesh.fx");
-	eParticle = render->CompileShader("particle.fx");
 	eSkybox = render->CompileShader("skybox.fx");
 	eArea = render->CompileShader("area.fx");
 	ePostFx = render->CompileShader("post.fx");
@@ -2559,14 +2553,11 @@ void Game::SetupShaders()
 	techMeshSimple = eMesh->GetTechniqueByName("mesh_simple");
 	techMeshSimple2 = eMesh->GetTechniqueByName("mesh_simple2");
 	techMeshExplo = eMesh->GetTechniqueByName("mesh_explo");
-	techParticle = eParticle->GetTechniqueByName("particle");
-	techTrail = eParticle->GetTechniqueByName("trail");
 	techSkybox = eSkybox->GetTechniqueByName("skybox");
 	techArea = eArea->GetTechniqueByName("area");
 	techGlowMesh = eGlow->GetTechniqueByName("mesh");
 	techGlowAni = eGlow->GetTechniqueByName("ani");
-	assert(techMesh && techMeshDir && techMeshSimple && techMeshSimple2 && techMeshExplo && techParticle && techTrail && techSkybox && techArea
-		&& techGlowMesh && techGlowAni);
+	assert(techMesh && techMeshDir && techMeshSimple && techMeshSimple2 && techMeshExplo && techSkybox && techArea && techGlowMesh && techGlowAni);
 
 	hMeshCombined = eMesh->GetParameterByName(nullptr, "matCombined");
 	hMeshWorld = eMesh->GetParameterByName(nullptr, "matWorld");
@@ -2580,10 +2571,6 @@ void Game::SetupShaders()
 	hMeshLights = eMesh->GetParameterByName(nullptr, "lights");
 	assert(hMeshCombined && hMeshWorld && hMeshTex && hMeshFogColor && hMeshFogParam && hMeshTint && hMeshAmbientColor && hMeshLightDir && hMeshLightColor
 		&& hMeshLights);
-
-	hParticleCombined = eParticle->GetParameterByName(nullptr, "matCombined");
-	hParticleTex = eParticle->GetParameterByName(nullptr, "tex0");
-	assert(hParticleCombined && hParticleTex);
 
 	hSkyboxCombined = eSkybox->GetParameterByName(nullptr, "matCombined");
 	hSkyboxTex = eSkybox->GetParameterByName(nullptr, "tex0");

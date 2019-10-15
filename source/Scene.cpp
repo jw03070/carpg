@@ -14,6 +14,7 @@
 #include "ParticleSystem.h"
 #include "Render.h"
 #include "TerrainShader.h"
+#include "ParticleShader.h"
 #include "ResourceManager.h"
 #include "SoundManager.h"
 #include "PhysicCallbacks.h"
@@ -3667,6 +3668,7 @@ void Game::DrawBloods(bool outside, const vector<Blood*>& bloods, const vector<L
 void Game::DrawBillboards(const vector<Billboard>& billboards)
 {
 	IDirect3DDevice9* device = render->GetDevice();
+	ID3DXEffect* effect = particle_shader->effect;
 
 	render->SetAlphaBlend(true);
 	render->SetAlphaTest(false);
@@ -3676,10 +3678,10 @@ void Game::DrawBillboards(const vector<Billboard>& billboards)
 	V(device->SetVertexDeclaration(render->GetVertexDeclaration(VDI_PARTICLE)));
 
 	uint passes;
-	V(eParticle->SetTechnique(techParticle));
-	V(eParticle->SetMatrix(hParticleCombined, (D3DXMATRIX*)&game_level->camera.matViewProj));
-	V(eParticle->Begin(&passes, 0));
-	V(eParticle->BeginPass(0));
+	V(effect->SetTechnique(particle_shader->techParticle));
+	V(effect->SetMatrix(particle_shader->hParticleCombined, (D3DXMATRIX*)&game_level->camera.matViewProj));
+	V(effect->Begin(&passes, 0));
+	V(effect->BeginPass(0));
 
 	for(vector<Billboard>::const_iterator it = billboards.begin(), end = billboards.end(); it != end; ++it)
 	{
@@ -3691,14 +3693,14 @@ void Game::DrawBillboards(const vector<Billboard>& billboards)
 		for(int i = 0; i < 4; ++i)
 			billboard_v[i].pos = Vec3::Transform(billboard_ext[i], m1);
 
-		V(eParticle->SetTexture(hParticleTex, it->tex));
-		V(eParticle->CommitChanges());
+		V(effect->SetTexture(particle_shader->hParticleTex, it->tex));
+		V(effect->CommitChanges());
 
 		V(device->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 2, billboard_v, sizeof(VParticle)));
 	}
 
-	V(eParticle->EndPass());
-	V(eParticle->End());
+	V(effect->EndPass());
+	V(effect->End());
 }
 
 //=================================================================================================
@@ -3753,6 +3755,7 @@ void Game::DrawExplosions(const vector<Explo*>& explos)
 void Game::DrawParticles(const vector<ParticleEmitter*>& pes)
 {
 	IDirect3DDevice9* device = render->GetDevice();
+	ID3DXEffect* effect = particle_shader->effect;
 
 	render->SetAlphaTest(false);
 	render->SetAlphaBlend(true);
@@ -3762,10 +3765,10 @@ void Game::DrawParticles(const vector<ParticleEmitter*>& pes)
 	V(device->SetVertexDeclaration(render->GetVertexDeclaration(VDI_PARTICLE)));
 
 	uint passes;
-	V(eParticle->SetTechnique(techParticle));
-	V(eParticle->SetMatrix(hParticleCombined, (D3DXMATRIX*)&game_level->camera.matViewProj));
-	V(eParticle->Begin(&passes, 0));
-	V(eParticle->BeginPass(0));
+	V(effect->SetTechnique(particle_shader->techParticle));
+	V(effect->SetMatrix(particle_shader->hParticleCombined, (D3DXMATRIX*)&game_level->camera.matViewProj));
+	V(effect->Begin(&passes, 0));
+	V(effect->BeginPass(0));
 
 	for(vector<ParticleEmitter*>::const_iterator it = pes.begin(), end = pes.end(); it != end; ++it)
 	{
@@ -3845,14 +3848,14 @@ void Game::DrawParticles(const vector<ParticleEmitter*>& pes)
 			break;
 		}
 
-		V(eParticle->SetTexture(hParticleTex, pe.tex->tex));
-		V(eParticle->CommitChanges());
+		V(effect->SetTexture(particle_shader->hParticleTex, pe.tex->tex));
+		V(effect->CommitChanges());
 
 		V(device->DrawPrimitive(D3DPT_TRIANGLELIST, 0, pe.alive * 2));
 	}
 
-	V(eParticle->EndPass());
-	V(eParticle->End());
+	V(effect->EndPass());
+	V(effect->End());
 
 	V(device->SetRenderState(D3DRS_BLENDOP, D3DBLENDOP_ADD));
 	V(device->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA));
@@ -3863,6 +3866,7 @@ void Game::DrawParticles(const vector<ParticleEmitter*>& pes)
 void Game::DrawTrailParticles(const vector<TrailParticleEmitter*>& tpes)
 {
 	IDirect3DDevice9* device = render->GetDevice();
+	ID3DXEffect* effect = particle_shader->effect;
 
 	render->SetAlphaTest(false);
 	render->SetAlphaBlend(true);
@@ -3872,10 +3876,10 @@ void Game::DrawTrailParticles(const vector<TrailParticleEmitter*>& tpes)
 	V(device->SetVertexDeclaration(render->GetVertexDeclaration(VDI_COLOR)));
 
 	uint passes;
-	V(eParticle->SetTechnique(techTrail));
-	V(eParticle->SetMatrix(hParticleCombined, (D3DXMATRIX*)&game_level->camera.matViewProj));
-	V(eParticle->Begin(&passes, 0));
-	V(eParticle->BeginPass(0));
+	V(effect->SetTechnique(particle_shader->techTrail));
+	V(effect->SetMatrix(particle_shader->hParticleCombined, (D3DXMATRIX*)&game_level->camera.matViewProj));
+	V(effect->Begin(&passes, 0));
+	V(effect->BeginPass(0));
 
 	VColor v[4];
 
@@ -3918,14 +3922,15 @@ void Game::DrawTrailParticles(const vector<TrailParticleEmitter*>& tpes)
 		}
 	}
 
-	V(eParticle->EndPass());
-	V(eParticle->End());
+	V(effect->EndPass());
+	V(effect->End());
 }
 
 //=================================================================================================
 void Game::DrawLightings(const vector<Electro*>& electros)
 {
 	IDirect3DDevice9* device = render->GetDevice();
+	ID3DXEffect* effect = particle_shader->effect;
 
 	render->SetAlphaTest(false);
 	render->SetAlphaBlend(true);
@@ -3936,11 +3941,11 @@ void Game::DrawLightings(const vector<Electro*>& electros)
 	V(device->SetVertexDeclaration(render->GetVertexDeclaration(VDI_PARTICLE)));
 
 	uint passes;
-	V(eParticle->SetTechnique(techParticle));
-	V(eParticle->SetTexture(hParticleTex, game_res->tLightingLine->tex));
-	V(eParticle->SetMatrix(hParticleCombined, (D3DXMATRIX*)&game_level->camera.matViewProj));
-	V(eParticle->Begin(&passes, 0));
-	V(eParticle->BeginPass(0));
+	V(effect->SetTechnique(particle_shader->techParticle));
+	V(effect->SetTexture(particle_shader->hParticleTex, game_res->tLightingLine->tex));
+	V(effect->SetMatrix(particle_shader->hParticleCombined, (D3DXMATRIX*)&game_level->camera.matViewProj));
+	V(effect->Begin(&passes, 0));
+	V(effect->BeginPass(0));
 
 	const Vec4 color(0.2f, 0.2f, 1.f, 1.f);
 
@@ -4011,8 +4016,8 @@ void Game::DrawLightings(const vector<Electro*>& electros)
 		}
 	}
 
-	V(eParticle->EndPass());
-	V(eParticle->End());
+	V(effect->EndPass());
+	V(effect->End());
 
 	V(device->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA));
 }
@@ -4072,6 +4077,7 @@ void Game::DrawStunEffects(const vector<StunEffect>& stuns)
 void Game::DrawPortals(const vector<Portal*>& portals)
 {
 	IDirect3DDevice9* device = render->GetDevice();
+	ID3DXEffect* effect = particle_shader->effect;
 
 	render->SetAlphaTest(false);
 	render->SetAlphaBlend(true);
@@ -4080,11 +4086,11 @@ void Game::DrawPortals(const vector<Portal*>& portals)
 
 	uint passes;
 	V(device->SetVertexDeclaration(render->GetVertexDeclaration(VDI_PARTICLE)));
-	V(eParticle->SetTechnique(techParticle));
-	V(eParticle->SetTexture(hParticleTex, game_res->tPortal->tex));
-	V(eParticle->SetMatrix(hParticleCombined, (D3DXMATRIX*)&game_level->camera.matViewProj));
-	V(eParticle->Begin(&passes, 0));
-	V(eParticle->BeginPass(0));
+	V(effect->SetTechnique(particle_shader->techParticle));
+	V(effect->SetTexture(particle_shader->hParticleTex, game_res->tPortal->tex));
+	V(effect->SetMatrix(particle_shader->hParticleCombined, (D3DXMATRIX*)&game_level->camera.matViewProj));
+	V(effect->Begin(&passes, 0));
+	V(effect->BeginPass(0));
 
 	for(vector<Portal*>::const_iterator it = portals.begin(), end = portals.end(); it != end; ++it)
 	{
@@ -4092,13 +4098,13 @@ void Game::DrawPortals(const vector<Portal*>& portals)
 		Matrix m1 = Matrix::Rotation(0, portal.rot, -portal_anim * PI * 2)
 			* Matrix::Translation(portal.pos + Vec3(0, 0.67f + 0.305f, 0))
 			* game_level->camera.matViewProj;
-		V(eParticle->SetMatrix(hParticleCombined, (D3DXMATRIX*)&m1));
-		V(eParticle->CommitChanges());
+		V(effect->SetMatrix(particle_shader->hParticleCombined, (D3DXMATRIX*)&m1));
+		V(effect->CommitChanges());
 		V(device->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 2, portal_v, sizeof(VParticle)));
 	}
 
-	V(eParticle->EndPass());
-	V(eParticle->End());
+	V(effect->EndPass());
+	V(effect->End());
 }
 
 //=================================================================================================
