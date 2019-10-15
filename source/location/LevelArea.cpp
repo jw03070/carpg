@@ -1129,7 +1129,13 @@ void TmpLevelArea::Save(GameWriter& f)
 
 void TmpLevelArea::Load(GameReader& f)
 {
-	const int particle_version = (LOAD_VERSION >= V_0_12 ? 1 : 0);
+	int particle_version;
+	if(LOAD_VERSION >= V_DEV)
+		particle_version = 2;
+	else if(LOAD_VERSION >= V_0_12)
+		particle_version = 1;
+	else
+		particle_version = 0;
 
 	pes.resize(f.Read<uint>());
 	for(ParticleEmitter*& pe : pes)

@@ -4030,17 +4030,10 @@ bool Level::Read(BitStreamReader& f, bool loaded_resources)
 				tpe->fade = 0.3f;
 				tpe->color1 = Vec4(1, 1, 1, 0.5f);
 				tpe->color2 = Vec4(1, 1, 1, 0);
+				tpe->width = 0.1f;
 				tpe->Init(50);
 				tmp_area.tpes.push_back(tpe);
 				bullet.trail = tpe;
-
-				TrailParticleEmitter* tpe2 = new TrailParticleEmitter;
-				tpe2->fade = 0.3f;
-				tpe2->color1 = Vec4(1, 1, 1, 0.5f);
-				tpe2->color2 = Vec4(1, 1, 1, 0);
-				tpe2->Init(50);
-				tmp_area.tpes.push_back(tpe2);
-				bullet.trail2 = tpe2;
 			}
 			else
 			{
@@ -4058,7 +4051,6 @@ bool Level::Read(BitStreamReader& f, bool loaded_resources)
 				bullet.tex_size = spell.size;
 				bullet.remove = false;
 				bullet.trail = nullptr;
-				bullet.trail2 = nullptr;
 				bullet.pe = nullptr;
 
 				if(spell.tex_particle)
