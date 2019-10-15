@@ -2900,13 +2900,15 @@ void Game::DrawScene(bool outside)
 	if(!draw_batch.explos.empty())
 		DrawExplosions(draw_batch.explos);
 
-	// trail particles
-	if(draw_batch.tpes)
-		DrawTrailParticles(*draw_batch.tpes);
-
-	// cz¹steczki
-	if(!draw_batch.pes.empty())
-		DrawParticles(draw_batch.pes);
+	// particles
+	if(draw_batch.tpes || !draw_batch.pes.empty())
+	{
+		particle_shader->Prepare(game_level->camera);
+		if(draw_batch.tpes)
+			particle_shader->DrawTrailParticles(*draw_batch.tpes);
+		if(!draw_batch.pes.empty())
+			particle_shader->DrawParticles(draw_batch.pes);
+	}
 
 	// electros
 	if(draw_batch.electros)
@@ -3678,8 +3680,8 @@ void Game::DrawBillboards(const vector<Billboard>& billboards)
 	V(device->SetVertexDeclaration(render->GetVertexDeclaration(VDI_PARTICLE)));
 
 	uint passes;
-	V(effect->SetTechnique(particle_shader->techParticle));
-	V(effect->SetMatrix(particle_shader->hParticleCombined, (D3DXMATRIX*)&game_level->camera.mat_view_proj));
+	V(effect->SetTechnique(particle_shader->tech));
+	V(effect->SetMatrix(particle_shader->h_mat_combined, (D3DXMATRIX*)&game_level->camera.mat_view_proj));
 	V(effect->Begin(&passes, 0));
 	V(effect->BeginPass(0));
 
@@ -3693,7 +3695,7 @@ void Game::DrawBillboards(const vector<Billboard>& billboards)
 		for(int i = 0; i < 4; ++i)
 			billboard_v[i].pos = Vec3::Transform(billboard_ext[i], m1);
 
-		V(effect->SetTexture(particle_shader->hParticleTex, it->tex));
+		V(effect->SetTexture(particle_shader->h_tex, it->tex));
 		V(effect->CommitChanges());
 
 		V(device->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 2, billboard_v, sizeof(VParticle)));
@@ -3752,77 +3754,6 @@ void Game::DrawExplosions(const vector<Explo*>& explos)
 }
 
 //=================================================================================================
-void Game::DrawParticles(const vector<ParticleEmitter*>& pes)
-{
-	particle_shader->SetCamera(game_level->camera);
-	particle_shader->DrawParticles(pes);
-}
-
-//=================================================================================================
-void Game::DrawTrailParticles(const vector<TrailParticleEmitter*>& tpes)
-{
-	IDirect3DDevice9* device = render->GetDevice();
-	ID3DXEffect* effect = particle_shader->effect;
-
-	render->SetAlphaTest(false);
-	render->SetAlphaBlend(true);
-	render->SetNoCulling(true);
-	render->SetNoZWrite(true);
-
-	V(device->SetVertexDeclaration(render->GetVertexDeclaration(VDI_COLOR)));
-
-	uint passes;
-	V(effect->SetTechnique(particle_shader->techTrail));
-	V(effect->SetMatrix(particle_shader->hParticleCombined, (D3DXMATRIX*)&game_level->camera.mat_view_proj));
-	V(effect->Begin(&passes, 0));
-	V(effect->BeginPass(0));
-
-	VColor v[4];
-
-	for(vector<TrailParticleEmitter*>::const_iterator it = tpes.begin(), end = tpes.end(); it != end; ++it)
-	{
-		const TrailParticleEmitter& tp = **it;
-
-		if(tp.alive < 2)
-			continue;
-
-		int id = tp.first;
-		const TrailParticle* prev = &tp.parts[id];
-		id = prev->next;
-
-		if(id < 0 || id >= (int)tp.parts.size() || !tp.parts[id].exists)
-		{
-			ReportError(6, Format("Trail particle emitter error, id = %d!", id));
-			const_cast<TrailParticleEmitter&>(tp).alive = false;
-			continue;
-		}
-
-		while(id != -1)
-		{
-			const TrailParticle& p = tp.parts[id];
-
-			v[0].pos = prev->pt1;
-			v[1].pos = prev->pt2;
-			v[2].pos = p.pt1; // !!! tu siê czasami crashuje, p jest z³ym adresem, wiêc pewnie id te¿ jest z³e
-			v[3].pos = p.pt2;
-
-			v[0].color = Vec4::Lerp(tp.color1, tp.color2, 1.f - prev->t / tp.fade);
-			v[1].color = v[0].color;
-			v[2].color = Vec4::Lerp(tp.color1, tp.color2, 1.f - p.t / tp.fade);
-			v[3].color = v[2].color;
-
-			V(device->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 2, v, sizeof(VColor)));
-
-			prev = &p;
-			id = prev->next;
-		}
-	}
-
-	V(effect->EndPass());
-	V(effect->End());
-}
-
-//=================================================================================================
 void Game::DrawLightings(const vector<Electro*>& electros)
 {
 	IDirect3DDevice9* device = render->GetDevice();
@@ -3837,9 +3768,9 @@ void Game::DrawLightings(const vector<Electro*>& electros)
 	V(device->SetVertexDeclaration(render->GetVertexDeclaration(VDI_PARTICLE)));
 
 	uint passes;
-	V(effect->SetTechnique(particle_shader->techParticle));
-	V(effect->SetTexture(particle_shader->hParticleTex, game_res->tLightingLine->tex));
-	V(effect->SetMatrix(particle_shader->hParticleCombined, (D3DXMATRIX*)&game_level->camera.mat_view_proj));
+	V(effect->SetTechnique(particle_shader->tech));
+	V(effect->SetTexture(particle_shader->h_tex, game_res->tLightingLine->tex));
+	V(effect->SetMatrix(particle_shader->h_mat_combined, (D3DXMATRIX*)&game_level->camera.mat_view_proj));
 	V(effect->Begin(&passes, 0));
 	V(effect->BeginPass(0));
 
@@ -3982,9 +3913,8 @@ void Game::DrawPortals(const vector<Portal*>& portals)
 
 	uint passes;
 	V(device->SetVertexDeclaration(render->GetVertexDeclaration(VDI_PARTICLE)));
-	V(effect->SetTechnique(particle_shader->techParticle));
-	V(effect->SetTexture(particle_shader->hParticleTex, game_res->tPortal->tex));
-	V(effect->SetMatrix(particle_shader->hParticleCombined, (D3DXMATRIX*)&game_level->camera.mat_view_proj));
+	V(effect->SetTechnique(particle_shader->tech));
+	V(effect->SetTexture(particle_shader->h_tex, game_res->tPortal->tex));
 	V(effect->Begin(&passes, 0));
 	V(effect->BeginPass(0));
 
@@ -3994,7 +3924,7 @@ void Game::DrawPortals(const vector<Portal*>& portals)
 		Matrix m1 = Matrix::Rotation(0, portal.rot, -portal_anim * PI * 2)
 			* Matrix::Translation(portal.pos + Vec3(0, 0.67f + 0.305f, 0))
 			* game_level->camera.mat_view_proj;
-		V(effect->SetMatrix(particle_shader->hParticleCombined, (D3DXMATRIX*)&m1));
+		V(effect->SetMatrix(particle_shader->h_mat_combined, (D3DXMATRIX*)&m1));
 		V(effect->CommitChanges());
 		V(device->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 2, portal_v, sizeof(VParticle)));
 	}
