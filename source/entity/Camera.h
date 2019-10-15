@@ -10,7 +10,7 @@ struct Camera : public CameraBase
 	Vec2 rot, real_rot;
 	Matrix matViewInv;
 	float dist, tmp_dist, draw_range, springiness, d;
-	FrustumPlanes frustum, frustum2;
+	FrustumPlanes frustum;
 	Key free_rot_key;
 	bool free_rot;
 

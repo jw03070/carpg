@@ -435,7 +435,6 @@ public:
 	//-----------------------------------------------------------------
 	int draw_flags;
 	Matrix mat;
-	int particle_count;
 	VB vbDungeon;
 	IB ibDungeon;
 	Int2 dungeon_part[16], dungeon_part2[16], dungeon_part3[16], dungeon_part4[16];
@@ -447,7 +446,6 @@ public:
 	VB vbFullscreen;
 	vector<PostEffect> post_effects;
 	// scene
-	VB vbParticle;
 	Color clear_color, clear_color_next;
 	bool dungeon_tex_wrap;
 	bool cl_normalmap, cl_specularmap, cl_glow;
