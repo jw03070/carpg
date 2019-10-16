@@ -2518,7 +2518,7 @@ bool Net::ProcessControlMessageClient(BitStreamReader& f, bool& exit_from_server
 						Error("Update client: UPDATE_ELECTRO, missing electro %d.", id);
 					else
 					{
-						Vec3 from = e->lines.back().pts.back();
+						Vec3 from = e->lines.back().to;
 						e->AddLine(from, pos);
 					}
 				}

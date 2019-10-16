@@ -6418,6 +6418,7 @@ void Unit::CastSpell()
 		if(IsSet(spell.flags, Spell::Jump))
 		{
 			Electro* e = new Electro;
+			e->area = area;
 			e->Register();
 			e->hitted.push_back(this);
 			e->dmg = dmg;
@@ -6466,8 +6467,8 @@ void Unit::CastSpell()
 				NetChange& c = Add1(Net::changes);
 				c.type = NetChange::CREATE_ELECTRO;
 				c.e_id = e->id;
-				c.pos = e->lines[0].pts.front();
-				memcpy(c.f, &e->lines[0].pts.back(), sizeof(Vec3));
+				c.pos = e->lines[0].from;
+				c.vec3 = e->lines[0].to;
 			}
 		}
 		else if(IsSet(spell.flags, Spell::Drain))

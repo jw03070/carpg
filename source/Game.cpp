@@ -5130,9 +5130,7 @@ void Game::UpdateElectros(LevelArea& area, float dt)
 	LoopAndRemove(area.tmp->electros, [&](Electro* p_electro)
 	{
 		Electro& electro = *p_electro;
-
-		for(Electro::Line& line : electro.lines)
-			line.t += dt;
+		electro.Update(area, dt);
 
 		if(!Net::IsLocal())
 		{
@@ -5164,7 +5162,7 @@ void Game::UpdateElectros(LevelArea& area, float dt)
 
 				// play sound
 				if(electro.spell->sound_hit)
-					sound_mgr->PlaySound3d(electro.spell->sound_hit, electro.lines.back().pts.back(), electro.spell->sound_hit_dist);
+					sound_mgr->PlaySound3d(electro.spell->sound_hit, electro.lines.back().to, electro.spell->sound_hit_dist);
 
 				// add particles
 				if(electro.spell->tex_particle)
@@ -5178,7 +5176,7 @@ void Game::UpdateElectros(LevelArea& area, float dt)
 					pe->spawn_min = 8;
 					pe->spawn_max = 12;
 					pe->max_particles = 12;
-					pe->pos = electro.lines.back().pts.back();
+					pe->pos = electro.lines.back().to;
 					pe->speed_min = Vec3(-1.5f, -1.5f, -1.5f);
 					pe->speed_max = Vec3(1.5f, 1.5f, 1.5f);
 					pe->pos_min = Vec3(-electro.spell->size, -electro.spell->size, -electro.spell->size);
@@ -5196,7 +5194,7 @@ void Game::UpdateElectros(LevelArea& area, float dt)
 				{
 					NetChange& c = Add1(Net::changes);
 					c.type = NetChange::ELECTRO_HIT;
-					c.pos = electro.lines.back().pts.back();
+					c.pos = electro.lines.back().to;
 				}
 
 				if(electro.dmg >= 10.f)
@@ -5231,7 +5229,7 @@ void Game::UpdateElectros(LevelArea& area, float dt)
 						{
 							Vec3 hitpoint;
 							Unit* new_hitted;
-							if(game_level->RayTest(electro.lines.back().pts.back(), it2->first->GetCenter(), hitted, hitpoint, new_hitted))
+							if(game_level->RayTest(electro.lines.back().to, it2->first->GetCenter(), hitted, hitpoint, new_hitted))
 							{
 								if(new_hitted == it2->first)
 								{
@@ -5248,7 +5246,7 @@ void Game::UpdateElectros(LevelArea& area, float dt)
 							electro.dmg = min(electro.dmg / 2, Lerp(electro.dmg, electro.dmg / 5, dist / 5));
 							electro.valid = true;
 							electro.hitted.push_back(target);
-							Vec3 from = electro.lines.back().pts.back();
+							Vec3 from = electro.lines.back().to;
 							Vec3 to = target->GetCenter();
 							electro.AddLine(from, to);
 
@@ -5285,7 +5283,7 @@ void Game::UpdateElectros(LevelArea& area, float dt)
 				electro.hitsome = false;
 
 				if(electro.spell->sound_hit)
-					sound_mgr->PlaySound3d(electro.spell->sound_hit, electro.lines.back().pts.back(), electro.spell->sound_hit_dist);
+					sound_mgr->PlaySound3d(electro.spell->sound_hit, electro.lines.back().to, electro.spell->sound_hit_dist);
 
 				// cz¹steczki
 				if(electro.spell->tex_particle)
@@ -5299,7 +5297,7 @@ void Game::UpdateElectros(LevelArea& area, float dt)
 					pe->spawn_min = 8;
 					pe->spawn_max = 12;
 					pe->max_particles = 12;
-					pe->pos = electro.lines.back().pts.back();
+					pe->pos = electro.lines.back().to;
 					pe->speed_min = Vec3(-1.5f, -1.5f, -1.5f);
 					pe->speed_max = Vec3(1.5f, 1.5f, 1.5f);
 					pe->pos_min = Vec3(-electro.spell->size, -electro.spell->size, -electro.spell->size);
@@ -5317,7 +5315,7 @@ void Game::UpdateElectros(LevelArea& area, float dt)
 				{
 					NetChange& c = Add1(Net::changes);
 					c.type = NetChange::ELECTRO_HIT;
-					c.pos = electro.lines.back().pts.back();
+					c.pos = electro.lines.back().to;
 				}
 			}
 			if(electro.lines.back().t >= 0.5f)

@@ -8,6 +8,8 @@
 #include "ResourceManager.h"
 #include "SaveState.h"
 #include "BitStreamFunc.h"
+#include "GameResources.h"
+#include "LevelArea.h"
 
 EntityType<Electro>::Impl EntityType<Electro>::impl;
 
@@ -58,28 +60,76 @@ bool Explo::Read(BitStreamReader& f)
 }
 
 //=================================================================================================
+void Electro::Update(LevelArea& area, float dt)
+{
+	for(Line& line : lines)
+	{
+		line.t += dt;
+		if(!line.trail)
+		{
+			if(line.t >= 0.5f)
+			{
+				line.trail = new TrailParticleEmitter;
+				line.trail->width = 0.1f;
+				line.trail->tex = game_res->tLightingLine;
+
+				static vector<Vec3> pts;
+				pts.clear();
+				pts.push_back(line.from);
+				line.trail->first = 0;
+
+				int steps = int(Vec3::Distance(line.from, line.to) * 10);
+				Vec3 dir = line.to - line.from;
+				const Vec3 step = dir / float(steps);
+				Vec3 prev_off = Vec3::Zero;
+
+				for(int i = 1; i < steps; ++i)
+				{
+					Vec3 p = line.from + step * (float(i) + Random(-0.25f, 0.25f));
+					Vec3 r = Vec3::Random(Vec3(-0.3f, -0.3f, -0.3f), Vec3(0.3f, 0.3f, 0.3f));
+					prev_off = (r + prev_off) / 2;
+					pts.push_back(p + prev_off);
+				}
+
+				pts.push_back(line.to);
+
+				line.trail->InitManual(pts, Vec4(0.2f, 0.2f, 1.f, 1.f));
+				UpdateLineColor(*line.trail);
+			}
+		}
+		else
+		{
+			if(line.t >= 1.f)
+			{
+				DeleteElement(area.tmp->tpes, line.trail);
+				line.trail = nullptr;
+			}
+			else
+				UpdateLineColor(*line.trail);
+		}
+	}
+}
+
+//=================================================================================================
 void Electro::AddLine(const Vec3& from, const Vec3& to)
 {
 	Line& line = Add1(lines);
-
 	line.t = 0.f;
-	line.pts.push_back(from);
+	line.from = from;
+	line.to = to;
+	line.trail = nullptr;
+}
 
-	int steps = int(Vec3::Distance(from, to) * 10);
-
-	Vec3 dir = to - from;
-	const Vec3 step = dir / float(steps);
-	Vec3 prev_off(0.f, 0.f, 0.f);
-
-	for(int i = 1; i < steps; ++i)
+//=================================================================================================
+void Electro::UpdateLineColor(TrailParticleEmitter& tp)
+{
+	const int count = (int)tp.parts.size();
+	for(int i = 0; i < count; ++i)
 	{
-		Vec3 p = from + step * (float(i) + Random(-0.25f, 0.25f));
-		Vec3 r = Vec3::Random(Vec3(-0.3f, -0.3f, -0.3f), Vec3(0.3f, 0.3f, 0.3f));
-		prev_off = (r + prev_off) / 2;
-		line.pts.push_back(p + prev_off);
+		TrailParticle& p = tp.parts[i];
+		float a = float(count - min(count, (int)abs(i - count * (tp.timer / 0.25f)))) / count;
+		p.color.w = min(0.5f, a * a);
 	}
-
-	line.pts.push_back(to);
 }
 
 //=================================================================================================
@@ -89,7 +139,9 @@ void Electro::Save(FileWriter& f)
 	f << lines.size();
 	for(Line& line : lines)
 	{
-		f.WriteVector4(line.pts);
+		f << (line.trail ? line.trail->id : -1);
+		f << line.from;
+		f << line.to;
 		f << line.t;
 	}
 	f << hitted.size();
@@ -104,16 +156,35 @@ void Electro::Save(FileWriter& f)
 }
 
 //=================================================================================================
-void Electro::Load(FileReader& f)
+void Electro::Load(FileReader& f, LevelArea& area)
 {
 	if(LOAD_VERSION >= V_0_12)
 		f >> id;
 	Register();
 	lines.resize(f.Read<uint>());
-	for(Line& line : lines)
+	if(LOAD_VERSION >= V_DEV)
 	{
-		f.ReadVector4(line.pts);
-		f >> line.t;
+		for(Line& line : lines)
+		{
+			line.trail = TrailParticleEmitter::GetById(f.Read<int>());
+			f >> line.from;
+			f >> line.to;
+			f >> line.t;
+		}
+	}
+	else
+	{
+		for(Line& line : lines)
+		{
+			static vector<Vec3> pts;
+			pts.clear();
+			f.ReadVector4(pts);
+			f >> line.t;
+			line.trail = nullptr;
+			line.from = pts.front();
+			line.to = pts.back();
+		}
+		Update(area, 0);
 	}
 	hitted.resize(f.Read<uint>());
 	for(Entity<Unit>& unit : hitted)
@@ -137,8 +208,8 @@ void Electro::Write(BitStreamWriter& f)
 	f.WriteCasted<byte>(lines.size());
 	for(Line& line : lines)
 	{
-		f << line.pts.front();
-		f << line.pts.back();
+		f << line.from;
+		f << line.to;
 		f << line.t;
 	}
 }

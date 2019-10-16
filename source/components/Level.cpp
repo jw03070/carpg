@@ -4122,6 +4122,7 @@ bool Level::Read(BitStreamReader& f, bool loaded_resources)
 		for(Electro*& electro : tmp_area.electros)
 		{
 			electro = new Electro;
+			electro->area = &area;
 			if(!electro->Read(f))
 			{
 				Error("Read level: Broken electro.");

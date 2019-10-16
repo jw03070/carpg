@@ -1162,7 +1162,8 @@ void TmpLevelArea::Load(GameReader& f)
 	for(Electro*& electro : electros)
 	{
 		electro = new Electro;
-		electro->Load(f);
+		electro->area = 
+		electro->Load(f, *this);
 	}
 
 	drains.resize(f.Read<uint>());

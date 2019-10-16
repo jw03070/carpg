@@ -23,10 +23,12 @@ struct Electro : public EntityType<Electro>
 {
 	struct Line
 	{
-		vector<Vec3> pts;
+		TrailParticleEmitter* trail;
+		Vec3 from, to;
 		float t;
 	};
 
+	LevelArea* area;
 	Spell* spell;
 	Entity<Unit> owner;
 	vector<Line> lines;
@@ -38,7 +40,9 @@ struct Electro : public EntityType<Electro>
 	static const int MIN_SIZE = 5;
 	static const int LINE_MIN_SIZE = 28;
 
+	void Update(float dt);
 	void AddLine(const Vec3& from, const Vec3& to);
+	void UpdateLineColor(TrailParticleEmitter& tp);
 	void Save(FileWriter& f);
 	void Load(FileReader& f);
 	void Write(BitStreamWriter& f);
