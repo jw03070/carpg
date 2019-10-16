@@ -177,7 +177,6 @@ public:
 	void DrawSceneNodes(const vector<SceneNode*>& nodes, const vector<Lights>& lights, bool outside);
 	void DrawDebugNodes(const vector<DebugSceneNode*>& nodes);
 	void DrawBloods(bool outside, const vector<Blood*>& bloods, const vector<Lights>& lights);
-	void DrawBillboards(const vector<Billboard>& billboards);
 	void DrawExplosions(const vector<Explo*>& explos);
 	void DrawLightings(const vector<Electro*>& electros);
 	void DrawStunEffects(const vector<StunEffect>& stuns);
@@ -450,8 +449,6 @@ public:
 	bool cl_normalmap, cl_specularmap, cl_glow;
 	DrawBatch draw_batch;
 	VDefault blood_v[4];
-	VParticle billboard_v[4];
-	Vec3 billboard_ext[4];
 	VParticle portal_v[4];
 	int uv_mod;
 	QuadTree quadtree;
